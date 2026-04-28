@@ -69,15 +69,16 @@
         /* Área de Conteúdo Principal */
         .main-content {
             flex: 1;
-            padding: 30px;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            padding: 20px 30px;
+            border-bottom: 1px solid #232533;
         }
 
         .header-top h1 { margin: 0; font-size: 24px; font-weight: 600; }
@@ -92,54 +93,13 @@
             color: #e67e22;
         }
 
-        /* Grid de Widgets (Cards superiores) */
-        .widgets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        /* Iframe Container */
+        #conteudo-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: var(--bg-body);
         }
-
-        .widget-card {
-            background-color: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #232533;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .widget-info h3 { margin: 0; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
-        .widget-info p { margin: 5px 0 0; font-size: 28px; font-weight: bold; }
-        
-        .widget-icon {
-            width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.05);
-            display: flex; justify-content: center; align-items: center; font-size: 20px;
-        }
-
-        /* Área central de alertas e calendário */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 20px;
-        }
-
-        .panel {
-            background-color: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #232533;
-        }
-
-        .panel-title { font-size: 14px; color: var(--text-muted); margin-top: 0; margin-bottom: 15px; font-weight: bold;}
-        
-        .alert-item { color: var(--accent-red); font-size: 14px; font-weight: bold; margin-bottom: 10px;}
-        .alert-sub { color: var(--text-muted); font-size: 12px; margin-bottom: 20px; display: block;}
-
-        .prazo-list { list-style: none; padding: 0; margin: 0; font-size: 13px; }
-        .prazo-list li { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #232533; }
-        .prazo-list li span { color: #2ecc71; }
     </style>
 </head>
 <body>
@@ -153,78 +113,44 @@
             </div>
         </div>
         
-        <a class="menu-item active">📊 Dashboard</a>
-        <a class="menu-item">👥 Funcionários</a>
-        <a class="menu-item">📖 Banco de Talentos</a>
-        <a class="menu-item">⚕️ Saúde e Segurança</a>
-        <a class="menu-item">📅 Gestão de Ponto</a>
-        <a class="menu-item">💰 Cálculo Mensal</a>
-        <a class="menu-item">🏖️ Gestão de Férias</a>
-        <a class="menu-item">⚙️ Tabelas Fiscais</a>
+        <a class="menu-item active" onclick="carregarPagina('dashboard-inicio.html', this)">📊 Dashboard</a>
+        <a class="menu-item" onclick="carregarPagina('funcionarios.html', this)">👥 Funcionários</a>
+        <a class="menu-item" onclick="carregarPagina('holerite.html', this)">💰 Cálculo Mensal</a>
+        <a class="menu-item" onclick="carregarPagina('configuracoes.html', this)">⚙️ Tabelas Fiscais</a>
     </aside>
 
     <main class="main-content">
         
         <header class="header-top">
             <div>
-                <h1>GESTÃO DE OPERAÇÕES</h1>
-                <div class="header-subtitle">Calendário inteligente com feriados Araçatuba/SP e semanas ISO.</div>
+                <h1 id="titulo-pagina">GESTÃO DE OPERAÇÕES</h1>
+                <div class="header-subtitle">Sistema Integrado de Recursos Humanos</div>
             </div>
             <div class="location-badge">📍 ARAÇATUBA / SP</div>
         </header>
 
-        <div class="widgets-grid">
-            <div class="widget-card">
-                <div class="widget-info"><h3>Total Cli</h3><p>0</p></div>
-                <div class="widget-icon">👥</div>
-            </div>
-            <div class="widget-card">
-                <div class="widget-info"><h3>Aniversários</h3><p>0</p></div>
-                <div class="widget-icon">🎂</div>
-            </div>
-            <div class="widget-card">
-                <div class="widget-info"><h3>Afastados</h3><p>0</p></div>
-                <div class="widget-icon">🩺</div>
-            </div>
-            <div class="widget-card">
-                <div class="widget-info"><h3>Pendências</h3><p>0</p></div>
-                <div class="widget-icon">📋</div>
-            </div>
-        </div>
-
-        <div class="content-grid">
-            
-            <div class="panel">
-                <h3 class="panel-title">⚠️ ALERTAS CRÍTICOS</h3>
-                <div class="alert-item">FÉRIAS 22+ MESES <span style="float:right">0</span></div>
-                <span class="alert-sub">Alto risco de multa em dobro.</span>
-                
-                <h3 class="panel-title" style="margin-top: 30px; text-align: center;">PRAZOS DE ARAÇATUBA</h3>
-                <ul class="prazo-list">
-                    <li>Pagamento de FGTS <span>Dia 7</span></li>
-                    <li>Envio do eSocial <span style="color: #e67e22;">Dia 15</span></li>
-                    <li>Pagamento Salários <span>5º dia útil</span></li>
-                    <li>Recolhimento INSS <span>Dia 20</span></li>
-                </ul>
-            </div>
-
-            <div class="panel">
-                <h3 class="panel-title">📅 CALENDÁRIO MENSAL</h3>
-                <div style="height: 200px; display: flex; justify-content: center; align-items: center; color: var(--text-muted);">
-                    Aqui entrará o calendário interativo
-                </div>
-            </div>
-
-            <div class="panel">
-                <h3 class="panel-title">📝 EVENTOS DO DIA</h3>
-                <input type="text" placeholder="Nova nota..." style="width: 100%; padding: 10px; box-sizing: border-box; background: var(--bg-body); border: 1px solid #232533; color: white; border-radius: 8px; margin-bottom: 20px;">
-                <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 50px;">
-                    SEM EVENTOS AGENDADOS
-                </div>
-            </div>
-            
-        </div>
+        <iframe id="conteudo-frame" src="funcionarios.html"></iframe>
+        
     </main>
+
+    <script>
+        function carregarPagina(url, elementoClicado) {
+            // Muda a página dentro do iframe
+            document.getElementById('conteudo-frame').src = url;
+
+            // Remove a classe 'active' de todos os botões do menu
+            let menus = document.getElementsByClassName('menu-item');
+            for (let i = 0; i < menus.length; i++) {
+                menus[i].classList.remove('active');
+            }
+
+            // Adiciona a classe 'active' apenas no botão que foi clicado
+            elementoClicado.classList.add('active');
+
+            // Muda o título lá em cima dependendo do menu
+            document.getElementById('titulo-pagina').innerText = elementoClicado.innerText.substring(3).toUpperCase();
+        }
+    </script>
 
 </body>
 </html>
