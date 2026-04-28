@@ -4,90 +4,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - HCM Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Estilo Universal Dark Mode */
         :root {
-            --bg-body: #0d0e15; --bg-card: #151623; --text-main: #ffffff;
-            --text-muted: #8b8d9b; --accent-purple: #8a2be2; --accent-green: #2ecc71;
-            --accent-red: #ff4757; --accent-orange: #f39c12; --border-color: #232533;
+            /* Paleta Zinc Moderna (Padrão Tailwind) */
+            --bg-body: #09090b; 
+            --bg-card: #18181b; 
+            --border-color: #27272a;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            /* Cores de Destaque Vibrantes */
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 20px; margin: 0; overflow-x: hidden;}
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            padding: 24px; 
+            margin: 0; 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
         
         /* Grid de Widgets Superiores */
-        .widgets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .widget-card { background-color: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
-        .widget-card:hover { transform: translateY(-5px); border-color: var(--accent-purple); box-shadow: 0 8px 25px rgba(138, 43, 226, 0.15);}
-        .widget-info h3 { margin: 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
-        .widget-info p { margin: 5px 0 0; font-size: 28px; font-weight: bold; }
-        .widget-icon { width: 45px; height: 45px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; justify-content: center; align-items: center; font-size: 22px; border: 1px solid rgba(255,255,255,0.05);}
+        .widgets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 24px; }
+        .widget-card { 
+            background-color: var(--bg-card); 
+            padding: 24px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border-color); 
+            display: flex; justify-content: space-between; align-items: center; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .widget-card:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--accent-purple); 
+            box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.1), 0 4px 6px -2px rgba(139, 92, 246, 0.05);
+        }
+        .widget-info h3 { margin: 0; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;}
+        .widget-info p { margin: 8px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em;}
+        .widget-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; justify-content: center; align-items: center; font-size: 24px; border: 1px solid rgba(255,255,255,0.05);}
 
-        /* Grid de Gráficos (NOVO) */
-        .charts-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 20px; }
-        .chart-container { background-color: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; height: 250px;}
+        /* Grid de Gráficos */
+        .charts-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px; }
+        .chart-container { 
+            background-color: var(--bg-card); 
+            padding: 24px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border-color); 
+            position: relative; 
+            height: 280px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
 
         /* Layout em Colunas Inferior */
-        .content-grid { display: grid; grid-template-columns: 1.2fr 2fr 1.2fr; gap: 20px; }
-        .panel { background-color: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
-        .panel-title { font-size: 13px; color: var(--text-muted); margin-top: 0; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
+        .content-grid { display: grid; grid-template-columns: 1.2fr 2fr 1.2fr; gap: 24px; }
+        .panel { 
+            background-color: var(--bg-card); 
+            padding: 24px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .panel-title { 
+            font-size: 14px; 
+            color: var(--text-main); 
+            margin-top: 0; margin-bottom: 20px; 
+            font-weight: 600; 
+            display: flex; align-items: center; gap: 8px;
+        }
         
         /* Alertas e Listas */
-        .alert-item { display: flex; justify-content: space-between; color: var(--accent-red); font-size: 14px; font-weight: bold; margin-bottom: 5px;}
-        .alert-sub { color: var(--text-muted); font-size: 11px; margin-bottom: 20px; display: block;}
-        .prazo-list { list-style: none; padding: 0; margin: 0; font-size: 13px; }
-        .prazo-list li { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
-        .prazo-list li span { color: var(--accent-green); font-weight: bold; }
-        .activity-item { font-size: 12px; padding: 10px; border-left: 3px solid var(--accent-purple); background: rgba(138, 43, 226, 0.05); margin-bottom: 10px; border-radius: 0 8px 8px 0; }
-        .activity-item small { display: block; color: var(--text-muted); margin-bottom: 3px; }
+        .alert-item { display: flex; justify-content: space-between; color: var(--accent-red); font-size: 14px; font-weight: 600; margin-bottom: 4px;}
+        .alert-sub { color: var(--text-muted); font-size: 12px; margin-bottom: 24px; display: block; line-height: 1.5;}
         
-        /* Custom Scrollbar para listas */
-        .scrollable { max-height: 200px; overflow-y: auto; padding-right: 5px; }
-        .scrollable::-webkit-scrollbar { width: 6px; }
-        .scrollable::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+        .prazo-list { list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--text-muted);}
+        .prazo-list li { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
+        .prazo-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .prazo-list li span { color: var(--text-main); font-weight: 600; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;}
+
+        .activity-item { 
+            font-size: 13px; padding: 12px 16px; 
+            border-left: 4px solid var(--accent-purple); 
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0) 100%); 
+            margin-bottom: 12px; border-radius: 0 8px 8px 0; 
+        }
+        .activity-item small { display: block; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;}
+        
+        /* Custom Scrollbar */
+        .scrollable { max-height: 220px; overflow-y: auto; padding-right: 8px; }
+        .scrollable::-webkit-scrollbar { width: 4px; }
+        .scrollable::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div class="widgets-grid">
         <div class="widget-card">
-            <div class="widget-info"><h3>Total Colaboradores</h3><p id="dashTotalFunc">0</p></div>
+            <div class="widget-info"><h3>Colaboradores</h3><p id="dashTotalFunc">0</p></div>
             <div class="widget-icon">👥</div>
         </div>
         <div class="widget-card">
-            <div class="widget-info"><h3>Férias Vencendo</h3><p id="dashAlertasFerias" style="color: var(--accent-orange);">0</p></div>
+            <div class="widget-info"><h3>Férias em Risco</h3><p id="dashAlertasFerias" style="color: var(--accent-orange);">0</p></div>
             <div class="widget-icon">🏖️</div>
         </div>
         <div class="widget-card">
-            <div class="widget-info"><h3>Docs Registrados</h3><p id="dashTotalDocs">0</p></div>
+            <div class="widget-info"><h3>Documentos</h3><p id="dashTotalDocs">0</p></div>
             <div class="widget-icon">🗂️</div>
         </div>
         <div class="widget-card">
-            <div class="widget-info"><h3>Folha Salarial Bruta</h3><p id="dashTotalFolha" style="font-size: 20px; color: var(--accent-green);">R$ 0,00</p></div>
+            <div class="widget-info"><h3>Folha Salarial Bruta</h3><p id="dashTotalFolha" style="font-size: 24px; color: var(--accent-green);">R$ 0,00</p></div>
             <div class="widget-icon">💰</div>
         </div>
     </div>
 
     <div class="charts-grid">
         <div class="chart-container">
-            <h3 class="panel-title" style="border:none; margin-bottom: 5px;">Status de Férias</h3>
+            <h3 class="panel-title">📊 Status de Férias</h3>
             <canvas id="graficoFerias"></canvas>
         </div>
         <div class="chart-container">
-            <h3 class="panel-title" style="border:none; margin-bottom: 5px;">Custo por Cargo (Top 5)</h3>
+            <h3 class="panel-title">💼 Custo por Cargo (Top 5)</h3>
             <canvas id="graficoCargos"></canvas>
         </div>
     </div>
 
     <div class="content-grid">
         <div class="panel">
-            <h3 class="panel-title">⚠️ Riscos Trabalhistas</h3>
+            <h3 class="panel-title">⚠️ Alertas Críticos</h3>
             <div id="containerAlertasCriticos">
-                <div class="alert-item">FÉRIAS 22+ MESES <span id="criticoFeriasCount">0</span></div>
-                <span class="alert-sub">Risco de multa em dobro para estes funcionários.</span>
+                <div class="alert-item">FÉRIAS > 22 MESES <span id="criticoFeriasCount">0</span></div>
+                <span class="alert-sub">Atenção ao prazo limite para evitar pagamento de multa em dobro (CLT).</span>
             </div>
-            <h3 class="panel-title" style="margin-top: 25px;">Prazos Legais / SP</h3>
+            <h3 class="panel-title" style="margin-top: 32px;">Prazos Mensais</h3>
             <ul class="prazo-list">
-                <li>Pagamento FGTS <span>Dia 07</span></li>
+                <li>Pagamento FGTS <span style="color: var(--accent-green);">Dia 07</span></li>
                 <li>Envio eSocial <span style="color: var(--accent-orange);">Dia 15</span></li>
                 <li>INSS / DARF <span>Dia 20</span></li>
                 <li>Salário <span>5º Dia Útil</span></li>
@@ -95,7 +152,7 @@
         </div>
 
         <div class="panel">
-            <h3 class="panel-title">📅 Planejamento de Descanso</h3>
+            <h3 class="panel-title">📅 Mural de Descanso</h3>
             <div id="muralFerias" class="scrollable" style="font-size: 13px;">
                 </div>
         </div>
@@ -103,17 +160,18 @@
         <div class="panel">
             <h3 class="panel-title">📝 Atividades Recentes</h3>
             <div id="containerAtividades" class="scrollable">
-                <div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px;">
-                    Nenhum registro recente.
+                <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px;">
+                    Nenhum registro recente no sistema.
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuração Global de Cores para o Chart.js combinar com o Dark Mode
-        Chart.defaults.color = '#8b8d9b';
-        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        // Configuração Global de Cores para o Chart.js
+        Chart.defaults.color = '#a1a1aa';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.size = 12;
 
         document.addEventListener("DOMContentLoaded", () => {
             atualizarDashboard();
@@ -124,28 +182,23 @@
             const documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
             const hoje = new Date();
 
-            // 1. Atualizar Widgets
             document.getElementById('dashTotalFunc').innerText = funcionarios.length;
             document.getElementById('dashTotalDocs').innerText = documentos.length;
             
             const totalFolha = funcionarios.reduce((acc, f) => acc + (parseFloat(f.salario) || 0), 0);
             document.getElementById('dashTotalFolha').innerText = totalFolha.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            // Variáveis para Férias e Gráficos
             let alertasCriticos = 0;
             let statusFerias = { aquisitivo: 0, adquirido: 0, vencendo: 0 };
             let custoPorCargo = {};
             let muralHTML = '';
 
-            // 2. Processamento Inteligente dos Dados
             funcionarios.forEach(f => {
-                // Cálculo de Custo por Cargo
                 let cargo = f.cargo && f.cargo.trim() !== "" ? f.cargo : "Não Informado";
                 let salario = parseFloat(f.salario) || 0;
                 if(custoPorCargo[cargo]) custoPorCargo[cargo] += salario;
                 else custoPorCargo[cargo] = salario;
 
-                // Cálculo de Férias
                 if (f.admissao) {
                     const admissao = new Date(f.admissao);
                     const meses = Math.floor(Math.abs(hoje - admissao) / (1000 * 60 * 60 * 24 * 30.44));
@@ -153,10 +206,10 @@
                     if (meses >= 22) {
                         alertasCriticos++;
                         statusFerias.vencendo++;
-                        muralHTML += `<div style="padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--accent-red);"><strong>${f.nome}</strong>: ${meses} meses s/ férias!</div>`;
+                        muralHTML += `<div style="padding: 12px; margin-bottom: 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: var(--accent-red); font-weight: 500;"><strong>${f.nome}</strong>: ${meses} meses s/ férias!</div>`;
                     } else if (meses >= 12) {
                         statusFerias.adquirido++;
-                        muralHTML += `<div style="padding: 10px; border-bottom: 1px solid var(--border-color);"><strong>${f.nome}</strong>: Adquirido (${meses}m).</div>`;
+                        muralHTML += `<div style="padding: 12px; margin-bottom: 8px; border-radius: 8px; background: rgba(255,255,255,0.03); color: var(--text-main);"><strong>${f.nome}</strong>: Adquirido (${meses}m).</div>`;
                     } else {
                         statusFerias.aquisitivo++;
                     }
@@ -167,7 +220,6 @@
             document.getElementById('criticoFeriasCount').innerText = alertasCriticos;
             if(muralHTML !== "") document.getElementById('muralFerias').innerHTML = muralHTML;
 
-            // 3. Atualizar Atividades (Documentos)
             const containerAtividades = document.getElementById('containerAtividades');
             if (documentos.length > 0) {
                 let atividadesHTML = '';
@@ -175,41 +227,37 @@
                     atividadesHTML += `
                         <div class="activity-item">
                             <small>${doc.dataDoc.split('-').reverse().join('/')}</small>
-                            Entrega de <strong>${doc.nomeDoc}</strong> para ${doc.funcNome}.
+                            Entrega de <strong>${doc.nomeDoc}</strong> para <span style="color: var(--text-main); font-weight: 500;">${doc.funcNome}</span>.
                         </div>`;
                 });
                 containerAtividades.innerHTML = atividadesHTML;
             }
 
-            // ---------------------------------------------------------
-            // 4. RENDERIZAR GRÁFICOS COM CANVAS (CHART.JS)
-            // ---------------------------------------------------------
-            
             // Gráfico 1: Status de Férias (Rosca)
             const ctxFerias = document.getElementById('graficoFerias').getContext('2d');
             new Chart(ctxFerias, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Aquisitivo (< 1 ano)', 'Adquirido (Pronto)', 'Risco (> 22m)'],
+                    labels: ['Aquisitivo (< 1 ano)', 'Adquirido (Ok)', 'Risco (> 22m)'],
                     datasets: [{
                         data: [statusFerias.aquisitivo, statusFerias.adquirido, statusFerias.vencendo],
-                        backgroundColor: ['#8a2be2', '#2ecc71', '#ff4757'],
+                        backgroundColor: ['#8b5cf6', '#10b981', '#ef4444'],
                         borderWidth: 0,
-                        hoverOffset: 5
+                        hoverOffset: 4
                     }]
                 },
                 options: { 
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } },
-                    cutout: '70%'
+                    plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } } },
+                    cutout: '75%',
+                    layout: { padding: 10 }
                 }
             });
 
-            // Preparar dados para o Gráfico 2 (Ordenar Cargos por Custo)
             let cargosOrdenados = Object.keys(custoPorCargo).sort((a, b) => custoPorCargo[b] - custoPorCargo[a]).slice(0, 5);
             let valoresCargos = cargosOrdenados.map(cargo => custoPorCargo[cargo]);
 
-            // Gráfico 2: Custo por Cargo (Barras Horizontais)
+            // Gráfico 2: Custo por Cargo
             const ctxCargos = document.getElementById('graficoCargos').getContext('2d');
             new Chart(ctxCargos, {
                 type: 'bar',
@@ -218,20 +266,20 @@
                     datasets: [{
                         label: 'Custo Total (R$)',
                         data: valoresCargos.length > 0 ? valoresCargos : [0],
-                        backgroundColor: 'rgba(138, 43, 226, 0.7)',
-                        borderColor: '#8a2be2',
-                        borderWidth: 1,
-                        borderRadius: 4
+                        backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                        borderRadius: 6,
+                        barThickness: 24
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // Faz as barras ficarem horizontais
+                    indexAxis: 'y',
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: { 
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true },
-                        y: { grid: { display: false } }
-                    }
+                        x: { grid: { color: 'rgba(255,255,255,0.03)' }, border: {display: false} },
+                        y: { grid: { display: false }, border: {display: false} }
+                    },
+                    layout: { padding: { right: 20 } }
                 }
             });
         }
