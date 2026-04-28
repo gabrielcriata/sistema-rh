@@ -120,11 +120,12 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
             <th>Faixa</th>
             <th>Até (R$)</th>
             <th>Alíquota (%)</th>
+            <th>Parcela a Deduzir (R$)</th>
         </tr>
-        <tr><td>1</td><td><input type="number" id="inssTeto1" class="tabela-input"></td><td>7.5</td></tr>
-        <tr><td>2</td><td><input type="number" id="inssTeto2" class="tabela-input"></td><td>9.0</td></tr>
-        <tr><td>3</td><td><input type="number" id="inssTeto3" class="tabela-input"></td><td>12.0</td></tr>
-        <tr><td>4 (Teto Máximo)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td></tr>
+        <tr><td>1</td><td><input type="number" id="inssTeto1" class="tabela-input"></td><td>7.5</td><td>0.00</td></tr>
+        <tr><td>2</td><td><input type="number" id="inssTeto2" class="tabela-input"></td><td>9.0</td><td><input type="number" id="inssDed2" class="tabela-input"></td></tr>
+        <tr><td>3</td><td><input type="number" id="inssTeto3" class="tabela-input"></td><td>12.0</td><td><input type="number" id="inssDed3" class="tabela-input"></td></tr>
+        <tr><td>4 (Teto)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td><td><input type="number" id="inssDed4" class="tabela-input"></td></tr>
     </table>
 
     <h3>Tabela de IRRF</h3>
@@ -151,10 +152,15 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
 
     function carregarTabelas() {
         const dados = JSON.parse(localStorage.getItem('rhTabelasFiscais')) || {
-            geral: { salarioMinimo: 1412.00, deducaoDependente: 189.59 },
-            inss: { teto1: 1412.00, teto2: 2666.68, teto3: 4000.03, teto4: 7786.02 },
-            irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
-        };
+        geral: { salarioMinimo: 1621.00, deducaoDependente: 189.59 }, // Atualizado para o mínimo de 2026
+        inss: { 
+            teto1: 1621.00, 
+            teto2: 2902.84, ded2: 24.32, 
+            teto3: 4354.27, ded3: 111.40, 
+            teto4: 8475.55, ded4: 198.49 
+        },
+        irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
+    };
 
         document.getElementById('salarioMinimo').value = dados.geral.salarioMinimo;
         document.getElementById('deducaoDependente').value = dados.geral.deducaoDependente;
@@ -172,6 +178,10 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
         document.getElementById('irrfTeto4').value = dados.irrf.teto4;
         document.getElementById('irrfDed4').value = dados.irrf.ded4;
         document.getElementById('irrfDed5').value = dados.irrf.ded5;
+
+        document.getElementById('inssDed2').value = dados.inss.ded2;
+    document.getElementById('inssDed3').value = dados.inss.ded3;
+    document.getElementById('inssDed4').value = dados.inss.ded4;
     }
 
     function salvarTabelas() {
@@ -180,12 +190,15 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
                 salarioMinimo: parseFloat(document.getElementById('salarioMinimo').value),
                 deducaoDependente: parseFloat(document.getElementById('deducaoDependente').value)
             },
-            inss: {
-                teto1: parseFloat(document.getElementById('inssTeto1').value),
-                teto2: parseFloat(document.getElementById('inssTeto2').value),
-                teto3: parseFloat(document.getElementById('inssTeto3').value),
-                teto4: parseFloat(document.getElementById('inssTeto4').value)
-            },
+           inss: {
+        teto1: parseFloat(document.getElementById('inssTeto1').value),
+        teto2: parseFloat(document.getElementById('inssTeto2').value),
+        ded2: parseFloat(document.getElementById('inssDed2').value),
+        teto3: parseFloat(document.getElementById('inssTeto3').value),
+        ded3: parseFloat(document.getElementById('inssDed3').value),
+        teto4: parseFloat(document.getElementById('inssTeto4').value),
+        ded4: parseFloat(document.getElementById('inssDed4').value)
+    },
             irrf: {
                 teto1: parseFloat(document.getElementById('irrfTeto1').value),
                 teto2: parseFloat(document.getElementById('irrfTeto2').value),
