@@ -92,7 +92,6 @@
 </div>
 
 <script>
-    // Carrega ao abrir a tela
     document.addEventListener("DOMContentLoaded", carregarDropdown);
 
     function carregarDropdown() {
@@ -120,38 +119,30 @@
     }
 
     function calcularINSS(salarioBruto, config) {
-    let desconto = 0;
-    let aliquotaRef = "";
+        let desconto = 0;
+        let aliquotaRef = "";
 
-    // 1. Trava do Teto Previdenciário
-    // Pela regra de 2026, ninguém pode contribuir com um valor base maior que R$ 8.475,55.
-    // Se o salário for maior que o teto, a base de cálculo "estaciona" no valor do teto.
-    const baseCalculo = salarioBruto > config.inss.teto4 ? config.inss.teto4 : salarioBruto;
+        const baseCalculo = salarioBruto > config.inss.teto4 ? config.inss.teto4 : salarioBruto;
 
-    // 2. Cálculo Progressivo Oficial (Método de Alíquota Cheia - Parcela a Deduzir)
-    // Este método matemático entrega o mesmo resultado do cálculo "fatia por fatia", 
-    // mas de forma muito mais direta e livre de erros de arredondamento.
-    if (baseCalculo <= config.inss.teto1) {
-        desconto = (baseCalculo * 0.075);
-        aliquotaRef = "7.5%";
-    } 
-    else if (baseCalculo <= config.inss.teto2) {
-        desconto = (baseCalculo * 0.09) - config.inss.ded2;
-        aliquotaRef = "9.0%";
-    } 
-    else if (baseCalculo <= config.inss.teto3) {
-        desconto = (baseCalculo * 0.12) - config.inss.ded3;
-        aliquotaRef = "12.0%";
-    } 
-    else {
-        // Enquadra qualquer valor acima da faixa 3 (seja até o teto ou salários altíssimos que foram limitados no Passo 1)
-        desconto = (baseCalculo * 0.14) - config.inss.ded4;
-        aliquotaRef = salarioBruto > config.inss.teto4 ? "Teto Máximo" : "14.0%";
+        if (baseCalculo <= config.inss.teto1) {
+            desconto = (baseCalculo * 0.075);
+            aliquotaRef = "7.5%";
+        } 
+        else if (baseCalculo <= config.inss.teto2) {
+            desconto = (baseCalculo * 0.09) - config.inss.ded2;
+            aliquotaRef = "9.0%";
+        } 
+        else if (baseCalculo <= config.inss.teto3) {
+            desconto = (baseCalculo * 0.12) - config.inss.ded3;
+            aliquotaRef = "12.0%";
+        } 
+        else {
+            desconto = (baseCalculo * 0.14) - config.inss.ded4;
+            aliquotaRef = salarioBruto > config.inss.teto4 ? "Teto Máximo" : "14.0%";
+        }
+
+        return { valor: desconto, ref: aliquotaRef };
     }
-
-    // Retorna o valor descontado e a referência para o holerite
-    return { valor: desconto, ref: aliquotaRef };
-}
 
     function calcularIRRF(salarioBruto, descontoINSS, dependentes, config) {
         let deducaoDep = config.geral ? config.geral.deducaoDependente : 189.59;
