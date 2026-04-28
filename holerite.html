@@ -99,11 +99,8 @@
         select.innerHTML = '<option value="">Selecione um funcionário...</option>';
         
         let funcionarios = [];
-        try {
-            funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
-        } catch(e) {
-            console.error("Erro ao ler funcionários", e);
-        }
+        try { funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || []; } 
+        catch(e) { console.error(e); }
         
         funcionarios.forEach(f => {
             let option = document.createElement('option');
@@ -118,30 +115,45 @@
         document.getElementById('hMesAno').textContent = `${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}`;
     }
 
+    // NOVO MOTOR DO INSS: Calcula "Fatia por Fatia" sem usar dedução
     function calcularINSS(salarioBruto, config) {
         let desconto = 0;
-        let aliquotaRef = "";
+        let teto1 = config.inss.teto1;
+        let teto2 = config.inss.teto2;
+        let teto3 = config.inss.teto3;
+        let teto4 = config.inss.teto4;
 
-        const baseCalculo = salarioBruto > config.inss.teto4 ? config.inss.teto4 : salarioBruto;
+        // Trava no teto máximo
+        let salario = salarioBruto > teto4 ? teto4 : salarioBruto;
+        let ultimaAliquota = "";
 
-        if (baseCalculo <= config.inss.teto1) {
-            desconto = (baseCalculo * 0.075);
-            aliquotaRef = "7.5%";
-        } 
-        else if (baseCalculo <= config.inss.teto2) {
-            desconto = (baseCalculo * 0.09) - config.inss.ded2;
-            aliquotaRef = "9.0%";
-        } 
-        else if (baseCalculo <= config.inss.teto3) {
-            desconto = (baseCalculo * 0.12) - config.inss.ded3;
-            aliquotaRef = "12.0%";
-        } 
-        else {
-            desconto = (baseCalculo * 0.14) - config.inss.ded4;
-            aliquotaRef = salarioBruto > config.inss.teto4 ? "Teto Máximo" : "14.0%";
+        // Fatia 1 (7.5%)
+        if (salario > 0) {
+            let valorFaixa = Math.min(salario, teto1);
+            desconto += valorFaixa * 0.075;
+            ultimaAliquota = "7,5%";
+        }
+        // Fatia 2 (9%)
+        if (salario > teto1) {
+            let valorFaixa = Math.min(salario, teto2) - teto1;
+            desconto += valorFaixa * 0.09;
+            ultimaAliquota = "9,0%";
+        }
+        // Fatia 3 (12%)
+        if (salario > teto2) {
+            let valorFaixa = Math.min(salario, teto3) - teto2;
+            desconto += valorFaixa * 0.12;
+            ultimaAliquota = "12,0%";
+        }
+        // Fatia 4 (14%)
+        if (salario > teto3) {
+            let valorFaixa = Math.min(salario, teto4) - teto3;
+            desconto += valorFaixa * 0.14;
+            ultimaAliquota = salarioBruto > teto4 ? "Teto Máx" : "14,0%";
         }
 
-        return { valor: desconto, ref: aliquotaRef };
+        // Escreve "Prog." para o funcionário saber que é progressivo e não imposto seco
+        return { valor: desconto, ref: ultimaAliquota + " (Prog.)" };
     }
 
     function calcularIRRF(salarioBruto, descontoINSS, dependentes, config) {
@@ -159,7 +171,7 @@
         if (irNormal < 0) irNormal = 0;
 
         let irrfFinal = irNormal;
-        let obsRef = aliquota + "%";
+        let obsRef = aliquota === 0 ? "Isento" : `${aliquota}%`;
 
         if (salarioBruto <= 5000.00) {
             irrfFinal = 0; obsRef = "Isento (Regra 2026)";
@@ -167,7 +179,7 @@
             const valorReducao = 978.62 - (0.133145 * salarioBruto);
             irrfFinal = irNormal - valorReducao;
             if (irrfFinal < 0) irrfFinal = 0;
-            obsRef = aliquota + "% (Reduzido)";
+            obsRef = `${aliquota}% (Reduzido)`;
         }
 
         return { valor: irrfFinal, ref: obsRef };
