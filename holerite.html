@@ -189,25 +189,49 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
     }
 
     function calcularIRRF(salarioBruto, descontoINSS, dependentes, config) {
-        const baseCalculo = salarioBruto - descontoINSS - (dependentes * config.geral.deducaoDependente);
-        let desconto = 0;
-        let aliquota = 0;
-        let deducao = 0;
+    // 1. Cálculo da Base e enquadramento na tabela tradicional progressiva
+    const baseCalculo = salarioBruto - descontoINSS - (dependentes * config.geral.deducaoDependente);
+    let irNormal = 0;
+    let aliquota = 0;
+    let deducao = 0;
 
-        if (baseCalculo <= config.irrf.teto1) { aliquota = 0; deducao = 0; }
-        else if (baseCalculo <= config.irrf.teto2) { aliquota = 7.5; deducao = config.irrf.ded2; }
-        else if (baseCalculo <= config.irrf.teto3) { aliquota = 15.0; deducao = config.irrf.ded3; }
-        else if (baseCalculo <= config.irrf.teto4) { aliquota = 22.5; deducao = config.irrf.ded4; }
-        else { aliquota = 27.5; deducao = config.irrf.ded5; }
+    if (baseCalculo <= config.irrf.teto1) { aliquota = 0; deducao = 0; }
+    else if (baseCalculo <= config.irrf.teto2) { aliquota = 7.5; deducao = config.irrf.ded2; }
+    else if (baseCalculo <= config.irrf.teto3) { aliquota = 15.0; deducao = config.irrf.ded3; }
+    else if (baseCalculo <= config.irrf.teto4) { aliquota = 22.5; deducao = config.irrf.ded4; }
+    else { aliquota = 27.5; deducao = config.irrf.ded5; }
 
-        if (aliquota > 0) {
-            desconto = (baseCalculo * (aliquota / 100)) - deducao;
-        }
+    if (aliquota > 0) {
+        irNormal = (baseCalculo * (aliquota / 100)) - deducao;
+    }
 
-        // IRRF não pode ser negativo
-        if (desconto < 0) desconto = 0;
+    // O imposto normal não pode ser negativo
+    if (irNormal < 0) irNormal = 0;
 
-        return { valor: desconto, ref: aliquota + "%" };
+    // 2. Aplicação da nova Regra de Isenção/Redução de 2026
+    let irrfFinal = irNormal;
+    let obsRef = aliquota + "%"; // Texto de referência que aparecerá no holerite
+
+    // Trava exata da isenção: Até R$ 5.000,00 redondos
+    if (salarioBruto <= 5000.00) {
+        irrfFinal = 0;
+        obsRef = "Isento (Regra 2026)";
+    } 
+    // Faixa de redução decrescente: Inicia estritamente em R$ 5.000,01
+    else if (salarioBruto >= 5000.01 && salarioBruto <= 7350.00) {
+        // Aplica a fórmula oficial do governo
+        const valorReducao = 978.62 - (0.133145 * salarioBruto);
+        irrfFinal = irNormal - valorReducao;
+        
+        // Garante que a redução não deixe o imposto final negativo
+        if (irrfFinal < 0) irrfFinal = 0;
+        
+        obsRef = aliquota + "% (Reduzido)";
+    }
+    // Para salários a partir de R$ 7.350,01, o if é ignorado e o irrfFinal cobra o imposto normal (irNormal).
+
+    return { valor: irrfFinal, ref: obsRef };
+}
     }
 
     function gerarHolerite() {
