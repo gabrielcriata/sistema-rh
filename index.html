@@ -4,103 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HCM Master - Gestão de Operações</title>
-    <style>
-        /* Estilos base e Dark Mode */
-        :root {
-            --bg-body: #0d0e15;
-            --bg-card: #151623;
-            --bg-sidebar: #11121a;
-            --text-main: #ffffff;
-            --text-muted: #8b8d9b;
-            --accent-purple: #8a2be2;
-            --accent-red: #ff4757;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Barra Lateral (Sidebar) */
-        .sidebar {
-            width: 250px;
-            background-color: var(--bg-sidebar);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #232533;
-        }
-
-        .logo-area {
-            padding: 0 20px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 18px;
-            border-bottom: 1px solid #232533;
-            margin-bottom: 20px;
-        }
-
-        .logo-icon { background: var(--accent-purple); color: white; padding: 5px 10px; border-radius: 8px; font-size: 20px; }
-
-        .menu-item {
-            padding: 12px 20px;
-            color: var(--text-muted);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .menu-item:hover, .menu-item.active {
-            background-color: rgba(138, 43, 226, 0.1);
-            color: var(--text-main);
-            border-right: 3px solid var(--accent-purple);
-        }
-
-        /* Área de Conteúdo Principal */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 30px;
-            border-bottom: 1px solid #232533;
-        }
-
-        .header-top h1 { margin: 0; font-size: 24px; font-weight: 600; }
-        .header-subtitle { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
-        
-        .location-badge {
-            background-color: var(--bg-card);
-            border: 1px solid #232533;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #e67e22;
-        }
-
-        /* Iframe Container */
-        #conteudo-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: var(--bg-body);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -120,7 +24,6 @@
     </aside>
 
     <main class="main-content">
-        
         <header class="header-top">
             <div>
                 <h1 id="titulo-pagina">GESTÃO DE OPERAÇÕES</h1>
@@ -130,27 +33,8 @@
         </header>
 
         <iframe id="conteudo-frame" src="funcionarios.html"></iframe>
-        
     </main>
 
-    <script>
-        function carregarPagina(url, elementoClicado) {
-            // Muda a página dentro do iframe
-            document.getElementById('conteudo-frame').src = url;
-
-            // Remove a classe 'active' de todos os botões do menu
-            let menus = document.getElementsByClassName('menu-item');
-            for (let i = 0; i < menus.length; i++) {
-                menus[i].classList.remove('active');
-            }
-
-            // Adiciona a classe 'active' apenas no botão que foi clicado
-            elementoClicado.classList.add('active');
-
-            // Muda o título lá em cima dependendo do menu
-            document.getElementById('titulo-pagina').innerText = elementoClicado.innerText.substring(3).toUpperCase();
-        }
-    </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
