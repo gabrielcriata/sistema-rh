@@ -4,41 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RH - Gerador de Holerite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-body: #0d0e15; --bg-card: #151623; --text-main: #ffffff;
-            --text-muted: #8b8d9b; --accent-purple: #8a2be2; --accent-green: #2ecc71;
-            --accent-red: #ff4757; --border-color: #232533;
+            --bg-body: #09090b; --bg-card: #18181b; --border-color: #27272a;
+            --text-main: #f4f4f5; --text-muted: #a1a1aa;
+            --accent-purple: #8b5cf6; --accent-green: #10b981;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 20px; margin: 0; }
-        .container { background-color: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-top: 0; font-weight: 600; }
-        h3 { color: var(--text-main); margin-top: 25px; font-weight: 500; font-size: 16px; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 24px; margin: 0; -webkit-font-smoothing: antialiased;}
+        .container { background-color: var(--bg-card); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h2 { color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-top: 0; font-weight: 600; font-size: 20px;}
 
-        .controles { display: flex; gap: 10px; margin-bottom: 25px; }
-        .controles select { flex-grow: 1; padding: 12px; background: #0a0b10; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-size: 14px; }
-        .controles select:focus { border-color: var(--accent-purple); outline: none; }
+        .controles { display: flex; gap: 12px; margin-bottom: 24px; }
+        .controles select { flex-grow: 1; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;}
+        .controles select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);}
         
-        button { padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); }
-        button:hover { background-color: #7122b8; transform: translateY(-1px); }
+        button { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); font-family: 'Inter', sans-serif;}
+        button:hover { background-color: #7c3aed; transform: translateY(-1px); }
 
-        .holerite-box { background: #fff; color: #111; border-radius: 4px; padding: 30px; margin-top: 30px; display: none; }
-        .holerite-box h3 { color: #111; border-bottom: 2px solid #111; margin-top: 0; text-align: center; padding-bottom: 10px;}
-        .dados-funcionario { margin-bottom: 20px; font-size: 14px; }
+        /* Estética Clássica do Holerite para Impressão e Leitura */
+        .holerite-box { background: #ffffff; color: #111827; border-radius: 8px; padding: 40px; margin-top: 30px; display: none; font-family: 'Courier New', Courier, monospace;}
+        .holerite-box h3 { color: #111827; border-bottom: 2px solid #111827; margin-top: 0; text-align: center; padding-bottom: 10px; font-family: 'Inter', sans-serif;}
+        .dados-funcionario { margin-bottom: 20px; font-size: 14px; line-height: 1.6;}
         
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 2px solid #111; }
-        th, td { border: 1px solid #111; padding: 8px; text-align: right; color: #111; }
-        th { background-color: #f0f0f0; text-align: center; font-weight: bold;}
-        td:nth-child(1) { text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; border: 2px solid #111827; }
+        th, td { border: 1px solid #111827; padding: 10px; text-align: right; }
+        th { background-color: #f3f4f6; text-align: center; font-weight: 700; font-family: 'Inter', sans-serif;}
+        td:nth-child(1) { text-align: left; font-weight: 600;}
 
-        .totais { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 10px; border-top: 2px solid #111; padding-top: 10px; }
-        .valor-liquido { color: #27ae60; font-size: 18px; }
+        .totais { display: flex; justify-content: space-between; font-weight: 700; font-size: 16px; margin-top: 10px; border-top: 2px solid #111827; padding-top: 15px; font-family: 'Inter', sans-serif;}
+        .valor-liquido { color: #059669; font-size: 20px; }
 
         @media print {
             body { background: white; padding: 0; }
             .controles, h2, .container { box-shadow: none; padding: 0; background: transparent; border: none; }
-            .holerite-box { display: block; padding: 0; }
+            .holerite-box { display: block; padding: 0; margin: 0;}
             h2, .controles { display: none; }
         }
     </style>
@@ -53,13 +54,13 @@
             <option value="">Selecione um funcionário...</option>
         </select>
         <button onclick="gerarHolerite()">Calcular e Gerar</button>
-        <button onclick="window.print()" style="background-color: #7f8c8d;">Imprimir PDF</button>
+        <button onclick="window.print()" style="background-color: #52525b; color: white;">Imprimir PDF</button>
     </div>
 
     <div id="holeritePronto" class="holerite-box">
         <div>
             <h3>RECIBO DE PAGAMENTO DE SALÁRIO</h3>
-            <p>Mês de Referência: <span id="hMesAno"></span></p>
+            <p style="font-family: 'Inter', sans-serif; font-weight: 500;">Mês de Referência: <span id="hMesAno"></span></p>
         </div>
         
         <div class="dados-funcionario">
@@ -115,44 +116,18 @@
         document.getElementById('hMesAno').textContent = `${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}`;
     }
 
-    // NOVO MOTOR DO INSS: Calcula "Fatia por Fatia" sem usar dedução
     function calcularINSS(salarioBruto, config) {
         let desconto = 0;
-        let teto1 = config.inss.teto1;
-        let teto2 = config.inss.teto2;
-        let teto3 = config.inss.teto3;
-        let teto4 = config.inss.teto4;
-
-        // Trava no teto máximo
+        let teto1 = config.inss.teto1; let teto2 = config.inss.teto2;
+        let teto3 = config.inss.teto3; let teto4 = config.inss.teto4;
         let salario = salarioBruto > teto4 ? teto4 : salarioBruto;
         let ultimaAliquota = "";
 
-        // Fatia 1 (7.5%)
-        if (salario > 0) {
-            let valorFaixa = Math.min(salario, teto1);
-            desconto += valorFaixa * 0.075;
-            ultimaAliquota = "7,5%";
-        }
-        // Fatia 2 (9%)
-        if (salario > teto1) {
-            let valorFaixa = Math.min(salario, teto2) - teto1;
-            desconto += valorFaixa * 0.09;
-            ultimaAliquota = "9,0%";
-        }
-        // Fatia 3 (12%)
-        if (salario > teto2) {
-            let valorFaixa = Math.min(salario, teto3) - teto2;
-            desconto += valorFaixa * 0.12;
-            ultimaAliquota = "12,0%";
-        }
-        // Fatia 4 (14%)
-        if (salario > teto3) {
-            let valorFaixa = Math.min(salario, teto4) - teto3;
-            desconto += valorFaixa * 0.14;
-            ultimaAliquota = salarioBruto > teto4 ? "Teto Máx" : "14,0%";
-        }
+        if (salario > 0) { let valorFaixa = Math.min(salario, teto1); desconto += valorFaixa * 0.075; ultimaAliquota = "7,5%"; }
+        if (salario > teto1) { let valorFaixa = Math.min(salario, teto2) - teto1; desconto += valorFaixa * 0.09; ultimaAliquota = "9,0%"; }
+        if (salario > teto2) { let valorFaixa = Math.min(salario, teto3) - teto2; desconto += valorFaixa * 0.12; ultimaAliquota = "12,0%"; }
+        if (salario > teto3) { let valorFaixa = Math.min(salario, teto4) - teto3; desconto += valorFaixa * 0.14; ultimaAliquota = salarioBruto > teto4 ? "Teto Máx" : "14,0%"; }
 
-        // Escreve "Prog." para o funcionário saber que é progressivo e não imposto seco
         return { valor: desconto, ref: ultimaAliquota + " (Prog.)" };
     }
 
@@ -173,9 +148,8 @@
         let irrfFinal = irNormal;
         let obsRef = aliquota === 0 ? "Isento" : `${aliquota}%`;
 
-        if (salarioBruto <= 5000.00) {
-            irrfFinal = 0; obsRef = "Isento (Regra 2026)";
-        } else if (salarioBruto >= 5000.01 && salarioBruto <= 7350.00) {
+        if (salarioBruto <= 5000.00) { irrfFinal = 0; obsRef = "Isento (Regra 2026)"; } 
+        else if (salarioBruto >= 5000.01 && salarioBruto <= 7350.00) {
             const valorReducao = 978.62 - (0.133145 * salarioBruto);
             irrfFinal = irNormal - valorReducao;
             if (irrfFinal < 0) irrfFinal = 0;
@@ -226,6 +200,5 @@
         document.getElementById('holeritePronto').style.display = 'block';
     }
 </script>
-
 </body>
 </html>
