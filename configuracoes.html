@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH - Configurações Fiscais</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .card { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        h2 { color: #333; margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn-salvar { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
+        .btn-salvar:hover { background-color: #0056b3; }
+        .mensagem { display: none; padding: 10px; background-color: #d4edda; color: #155724; margin-top: 15px; border-radius: 5px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Parâmetros Fiscais (2026)</h2>
+    
+    <div class="form-group">
+        <label for="salarioMinimo">Salário Mínimo Vigente (R$):</label>
+        <input type="number" id="salarioMinimo" step="0.01">
+    </div>
+
+    <div class="form-group">
+        <label for="deducaoDependente">Dedução por Dependente - IRRF (R$):</label>
+        <input type="number" id="deducaoDependente" step="0.01">
+    </div>
+
+    <div class="form-group">
+        <label for="tetoInss">Teto Máximo do INSS (R$):</label>
+        <input type="number" id="tetoInss" step="0.01">
+    </div>
+
+    <button class="btn-salvar" onclick="salvarConfiguracoes()">Salvar Parâmetros</button>
+    <div id="msgSucesso" class="mensagem">Configurações salvas com sucesso!</div>
+</div>
+
+<script>
+    // Executa ao carregar a página para preencher com os dados salvos ou valores padrão
+    document.addEventListener("DOMContentLoaded", carregarConfiguracoes);
+
+    function carregarConfiguracoes() {
+        // Tenta buscar as configurações salvas. Se não existirem, usa valores zerados ou iniciais
+        const configSalva = JSON.parse(localStorage.getItem('parametrosFiscaisRH')) || {
+            salarioMinimo: 1412.00,
+            deducaoDependente: 189.59,
+            tetoInss: 7786.02
+        };
+
+        document.getElementById('salarioMinimo').value = configSalva.salarioMinimo;
+        document.getElementById('deducaoDependente').value = configSalva.deducaoDependente;
+        document.getElementById('tetoInss').value = configSalva.tetoInss;
+    }
+
+    function salvarConfiguracoes() {
+        const config = {
+            salarioMinimo: parseFloat(document.getElementById('salarioMinimo').value),
+            deducaoDependente: parseFloat(document.getElementById('deducaoDependente').value),
+            tetoInss: parseFloat(document.getElementById('tetoInss').value)
+        };
+
+        // Salva os dados no navegador
+        localStorage.setItem('parametrosFiscaisRH', JSON.stringify(config));
+
+        // Mostra mensagem de sucesso temporária
+        const msg = document.getElementById('msgSucesso');
+        msg.style.display = 'block';
+        setTimeout(() => { msg.style.display = 'none'; }, 3000);
+    }
+</script>
+
+</body>
+</html>
