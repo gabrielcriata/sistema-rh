@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH - Férias e Faltas</title>
+    <style>
+        /* Estilo Universal Dark Mode */
+        :root {
+            --bg-body: #0d0e15; --bg-card: #151623; --text-main: #ffffff;
+            --text-muted: #8b8d9b; --accent-purple: #8a2be2; --accent-green: #2ecc71;
+            --accent-red: #ff4757; --accent-orange: #f39c12; --border-color: #232533;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 20px; margin: 0; }
+        .container { background-color: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-top: 0; font-weight: 600; }
+        h3 { color: var(--text-main); margin-top: 25px; font-weight: 500; font-size: 16px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        label { font-size: 12px; color: var(--text-muted); font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
+        input, select { width: 100%; padding: 12px; background: #0a0b10; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2); }
+        button, .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 10px;}
+        button:hover, .btn-salvar:hover { background-color: #7122b8; transform: translateY(-1px); }
+        .btn-excluir { background-color: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 4px 8px; font-size: 11px; margin-left: 10px;}
+        .btn-excluir:hover { background: rgba(255, 71, 87, 0.1); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: rgba(255,255,255,0.02); }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge.green { background: rgba(46, 204, 113, 0.1); color: var(--accent-green); border: 1px solid rgba(46, 204, 113, 0.2); }
+        .badge.orange { background: rgba(243, 156, 18, 0.1); color: var(--accent-orange); border: 1px solid rgba(243, 156, 18, 0.2); }
+        .badge.red { background: rgba(255, 71, 87, 0.1); color: var(--accent-red); border: 1px solid rgba(255, 71, 87, 0.2); }
+        .lista-faltas { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Controle de Férias e Faltas</h2>
+    
+    <div class="form-grid">
+        <div class="form-group full-width">
+            <label>Lançar Falta Injustificada para:</label>
+            <select id="selectFuncionario">
+                <option value="">Selecione um funcionário...</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Data da Falta:</label>
+            <input type="date" id="dataFalta">
+        </div>
+        <div class="form-group">
+            <label>Motivo / Observação:</label>
+            <input type="text" id="motivoFalta" placeholder="Ex: Não compareceu, sem atestado">
+        </div>
+    </div>
+
+    <button class="btn-salvar" onclick="registrarFalta()">Registrar Falta</button>
+
+    <h3>Painel de Férias (Estimativa CLT)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Funcionário</th>
+                <th>Admissão (Meses Trabalhados)</th>
+                <th>Total de Faltas</th>
+                <th>Dias de Férias Estimados</th>
+            </tr>
+        </thead>
+        <tbody id="painelFerias">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarDropdown();
+        renderizarPainel();
+    });
+
+    function carregarDropdown() {
+        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+        const select = document.getElementById('selectFuncionario');
+        
+        funcionarios.forEach(f => {
+            let option = document.createElement('option');
+            option.value = f.id;
+            option.textContent = f.nome;
+            select.appendChild(option);
+        });
+    }
+
+    function registrarFalta() {
+        const funcId = document.getElementById('selectFuncionario').value;
+        const dataFalta = document.getElementById('dataFalta').value;
+        const motivo = document.getElementById('motivoFalta').value || "Não justificada";
+
+        if (!funcId || !dataFalta) {
+            alert("Selecione o funcionário e a data da falta!");
+            return;
+        }
+
+        const falta = { id: Date.now(), funcId, dataFalta, motivo };
+
+        let faltas = JSON.parse(localStorage.getItem('rhFaltas')) || [];
+        faltas.push(falta);
+        localStorage.setItem('rhFaltas', JSON.stringify(faltas));
+        
+        document.getElementById('dataFalta').value = '';
+        document.getElementById('motivoFalta').value = '';
+        renderizarPainel();
+    }
+
+    function excluirFalta(id) {
+        if(confirm("Remover esta falta?")) {
+            let faltas = JSON.parse(localStorage.getItem('rhFaltas')) || [];
+            faltas = faltas.filter(f => f.id !== id);
+            localStorage.setItem('rhFaltas', JSON.stringify(faltas));
+            renderizarPainel();
+        }
+    }
+
+    function renderizarPainel() {
+        const tbody = document.getElementById('painelFerias');
+        tbody.innerHTML = '';
+        
+        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+        const todasFaltas = JSON.parse(localStorage.getItem('rhFaltas')) || [];
+        const hoje = new Date(); // Considerando a data atual (Abril 2026)
+
+        funcionarios.forEach(f => {
+            // Filtra as faltas deste funcionário específico
+            const faltasFuncionario = todasFaltas.filter(falta => falta.funcId == f.id);
+            const numFaltas = faltasFuncionario.length;
+            
+            // Calcula meses trabalhados
+            let mesesTrabalhados = 0;
+            if (f.admissao) {
+                const dataAdmissao = new Date(f.admissao);
+                const diffTempo = Math.abs(hoje - dataAdmissao);
+                mesesTrabalhados = Math.floor(diffTempo / (1000 * 60 * 60 * 24 * 30.44));
+            }
+
+            // Regra CLT Simplificada para Férias Proporcionais
+            // Se tem mais de 12 meses, ganha 30 dias base. Se menos, ganha 2.5 dias por mês.
+            let diasBase = mesesTrabalhados >= 12 ? 30 : Math.floor(mesesTrabalhados * 2.5);
+
+            // Redução por faltas (Regra CLT)
+            let diasFerias = diasBase;
+            if (mesesTrabalhados >= 12) {
+                if (numFaltas >= 6 && numFaltas <= 14) diasFerias = 24;
+                else if (numFaltas >= 15 && numFaltas <= 23) diasFerias = 18;
+                else if (numFaltas >= 24 && numFaltas <= 32) diasFerias = 12;
+                else if (numFaltas > 32) diasFerias = 0;
+            } else {
+                // Proporcional simplificado: reduz dias com base na proporção se tiver faltas
+                if (numFaltas > 5) diasFerias = Math.max(0, diasFerias - (numFaltas - 5)); 
+            }
+
+            // Lógica de cores para o badge
+            let badgeClass = "green";
+            if (mesesTrabalhados >= 22) badgeClass = "red"; // Risco de multa (férias vencendo)
+            else if (mesesTrabalhados >= 12) badgeClass = "orange"; // Já tem direito
+
+            // Monta a lista visual de faltas para detalhes
+            let listaFaltasHTML = '';
+            faltasFuncionario.forEach(falta => {
+                const dataF = falta.dataFalta.split('-').reverse().join('/');
+                listaFaltasHTML += `<div>- ${dataF} (${falta.motivo}) <button class="btn-excluir" onclick="excluirFalta(${falta.id})">x</button></div>`;
+            });
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${f.nome}</strong></td>
+                    <td>
+                        ${mesesTrabalhados} meses <br>
+                        <span class="badge ${badgeClass}">
+                            ${mesesTrabalhados >= 22 ? 'VENCENDO / MULTA!' : (mesesTrabalhados >= 12 ? 'ADQUIRIDO' : 'AQUISITIVO')}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color: ${numFaltas > 5 ? 'var(--accent-red)' : 'var(--text-main)'}; font-weight: bold;">
+                            ${numFaltas}
+                        </span>
+                        <div class="lista-faltas">${listaFaltasHTML}</div>
+                    </td>
+                    <td><strong style="font-size: 18px; color: var(--accent-purple);">${diasFerias} dias</strong></td>
+                </tr>
+            `;
+        });
+    }
+</script>
+
+</body>
+</html>
