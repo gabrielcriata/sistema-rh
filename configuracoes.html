@@ -6,63 +6,34 @@
     <title>RH - Tabelas Fiscais (2026)</title>
     <style>
         :root {
-            --bg-body: #0d0e15;
-            --bg-card: #151623;
-            --text-main: #ffffff;
-            --text-muted: #8b8d9b;
-            --accent-purple: #8a2be2;
-            --accent-green: #2ecc71;
-            --accent-red: #ff4757;
-            --border-color: #232533;
+            --bg-body: #0d0e15; --bg-card: #151623; --text-main: #ffffff;
+            --text-muted: #8b8d9b; --accent-purple: #8a2be2; --accent-green: #2ecc71;
+            --accent-red: #ff4757; --border-color: #232533;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            padding: 20px;
-            margin: 0;
-        }
-
-        .container, .card {
-            background-color: var(--bg-card);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            max-width: 900px;
-            margin: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 20px; margin: 0; }
+        .container { background-color: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         h2 { color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-top: 0; font-weight: 600; }
         h3 { color: var(--text-main); margin-top: 25px; font-weight: 500; font-size: 16px; }
 
-        .form-grid, .grid-geral, .controles { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        .form-grid, .grid-geral { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
         .form-group { display: flex; flex-direction: column; }
-        .form-group.full-width { grid-column: 1 / -1; }
-
+        
         label { font-size: 12px; color: var(--text-muted); font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
-
-        input, select {
-            width: 100%; padding: 12px; background: #0a0b10;
-            border: 1px solid var(--border-color); color: var(--text-main);
-            border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s;
-        }
-
-        input:focus, select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2); }
+        input { width: 100%; padding: 12px; background: #0a0b10; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
+        input:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2); }
         input.tabela-input { text-align: center; padding: 8px; }
 
-        button, .btn-salvar {
-            padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px;
-        }
-        .btn-salvar, button { background-color: var(--accent-purple); width: 100%; margin-top: 10px;}
-        .btn-salvar:hover, button:hover { background-color: #7122b8; transform: translateY(-1px); }
+        button, .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 10px;}
+        .btn-salvar:hover { background-color: #7122b8; transform: translateY(-1px); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid var(--border-color); }
         th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background-color: rgba(255,255,255,0.02); }
+        
+        .col-texto { color: var(--text-muted); font-weight: bold; }
 
         .msg-sucesso { display: none; background-color: rgba(46, 204, 113, 0.1); color: var(--accent-green); border: 1px solid rgba(46, 204, 113, 0.2); padding: 12px; border-radius: 8px; text-align: center; margin-top: 20px; font-weight: bold; }
     </style>
@@ -87,29 +58,85 @@
     <table>
         <tr>
             <th>Faixa</th>
+            <th>De (R$)</th>
             <th>Até (R$)</th>
             <th>Alíquota (%)</th>
             <th>Parcela a Deduzir (R$)</th>
         </tr>
-        <tr><td>1</td><td><input type="number" id="inssTeto1" class="tabela-input"></td><td>7.5</td><td>0.00</td></tr>
-        <tr><td>2</td><td><input type="number" id="inssTeto2" class="tabela-input"></td><td>9.0</td><td><input type="number" id="inssDed2" class="tabela-input"></td></tr>
-        <tr><td>3</td><td><input type="number" id="inssTeto3" class="tabela-input"></td><td>12.0</td><td><input type="number" id="inssDed3" class="tabela-input"></td></tr>
-        <tr><td>4 (Teto Máx)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td><td><input type="number" id="inssDed4" class="tabela-input"></td></tr>
+        <tr>
+            <td>1</td>
+            <td class="col-texto">0,00</td>
+            <td><input type="number" id="inssTeto1" class="tabela-input" onchange="atualizarLimites()"></td>
+            <td class="col-texto">7.5</td>
+            <td class="col-texto">0,00</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td class="col-texto" id="inssDe2">1.621,01</td>
+            <td><input type="number" id="inssTeto2" class="tabela-input" onchange="atualizarLimites()"></td>
+            <td class="col-texto">9.0</td>
+            <td><input type="number" id="inssDed2" class="tabela-input"></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td class="col-texto" id="inssDe3">2.902,85</td>
+            <td><input type="number" id="inssTeto3" class="tabela-input" onchange="atualizarLimites()"></td>
+            <td class="col-texto">12.0</td>
+            <td><input type="number" id="inssDed3" class="tabela-input"></td>
+        </tr>
+        <tr>
+            <td>4 (Teto Máx)</td>
+            <td class="col-texto" id="inssDe4">4.354,28</td>
+            <td><input type="number" id="inssTeto4" class="tabela-input"></td>
+            <td class="col-texto">14.0</td>
+            <td><input type="number" id="inssDed4" class="tabela-input"></td>
+        </tr>
     </table>
 
     <h3>Tabela de IRRF</h3>
     <table>
         <tr>
             <th>Faixa</th>
+            <th>De (R$)</th>
             <th>Até (R$)</th>
             <th>Alíquota (%)</th>
             <th>Parcela a Deduzir (R$)</th>
         </tr>
-        <tr><td>1 (Isento)</td><td><input type="number" id="irrfTeto1" class="tabela-input"></td><td>0.0</td><td>0.00</td></tr>
-        <tr><td>2</td><td><input type="number" id="irrfTeto2" class="tabela-input"></td><td>7.5</td><td><input type="number" id="irrfDed2" class="tabela-input"></td></tr>
-        <tr><td>3</td><td><input type="number" id="irrfTeto3" class="tabela-input"></td><td>15.0</td><td><input type="number" id="irrfDed3" class="tabela-input"></td></tr>
-        <tr><td>4</td><td><input type="number" id="irrfTeto4" class="tabela-input"></td><td>22.5</td><td><input type="number" id="irrfDed4" class="tabela-input"></td></tr>
-        <tr><td>5 (Acima de)</td><td>Infinidade</td><td>27.5</td><td><input type="number" id="irrfDed5" class="tabela-input"></td></tr>
+        <tr>
+            <td>1 (Isento)</td>
+            <td class="col-texto">0,00</td>
+            <td><input type="number" id="irrfTeto1" class="tabela-input" onchange="atualizarLimites()"></td>
+            <td class="col-texto">0.0</td>
+            <td class="col-texto">0,00</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td class="col-texto" id="irrfDe2">2.259,21</td>
+            <td><input type="number" id="irrfTeto2" class="tabela-input" onchange="atualizarLimites()"></td>
+            <td class="col-texto">7.5</td>
+            <td><input type="number" id="irrfDed2" class="tabela-input"></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td class="col-texto" id="irrfDe3">2.826,66</td>
+            <td><input type="number" id="irrfTeto3" class="tabela-input" onchange="atualizarLimites()"></td>
+            <td class="col-texto">15.0</td>
+            <td><input type="number" id="irrfDed3" class="tabela-input"></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td class="col-texto" id="irrfDe4">3.751,06</td>
+            <td><input type="number" id="irrfTeto4" class="tabela-input" onchange="atualizarLimites()"></td>
+            <td class="col-texto">22.5</td>
+            <td><input type="number" id="irrfDed4" class="tabela-input"></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td class="col-texto" id="irrfDe5">4.664,69</td>
+            <td class="col-texto">Infinidade</td>
+            <td class="col-texto">27.5</td>
+            <td><input type="number" id="irrfDed5" class="tabela-input"></td>
+        </tr>
     </table>
 
     <button class="btn-salvar" onclick="salvarTabelas()">Salvar Tabelas no Sistema</button>
@@ -131,28 +158,47 @@
             irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
         };
 
+        // Geral
         document.getElementById('salarioMinimo').value = dados.geral.salarioMinimo;
         document.getElementById('deducaoDependente').value = dados.geral.deducaoDependente;
         
+        // INSS
         document.getElementById('inssTeto1').value = dados.inss.teto1;
         document.getElementById('inssTeto2').value = dados.inss.teto2;
         document.getElementById('inssTeto3').value = dados.inss.teto3;
         document.getElementById('inssTeto4').value = dados.inss.teto4;
+        document.getElementById('inssDed2').value = dados.inss.ded2;
+        document.getElementById('inssDed3').value = dados.inss.ded3;
+        document.getElementById('inssDed4').value = dados.inss.ded4;
 
+        // IRRF
         document.getElementById('irrfTeto1').value = dados.irrf.teto1;
         document.getElementById('irrfTeto2').value = dados.irrf.teto2;
         document.getElementById('irrfTeto3').value = dados.irrf.teto3;
         document.getElementById('irrfTeto4').value = dados.irrf.teto4;
-        
         document.getElementById('irrfDed2').value = dados.irrf.ded2;
         document.getElementById('irrfDed3').value = dados.irrf.ded3;
         document.getElementById('irrfDed4').value = dados.irrf.ded4;
         document.getElementById('irrfDed5').value = dados.irrf.ded5;
 
-        // Novas parcelas do INSS
-        document.getElementById('inssDed2').value = dados.inss.ded2;
-        document.getElementById('inssDed3').value = dados.inss.ded3;
-        document.getElementById('inssDed4').value = dados.inss.ded4;
+        // Atualiza os campos visuais "De (R$)"
+        atualizarLimites();
+    }
+
+    function atualizarLimites() {
+        // Formata os textos para exibir no padrão "1.621,01"
+        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // Atualiza "De" do INSS
+        document.getElementById('inssDe2').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto1').value || 0) + 0.01);
+        document.getElementById('inssDe3').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto2').value || 0) + 0.01);
+        document.getElementById('inssDe4').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto3').value || 0) + 0.01);
+
+        // Atualiza "De" do IRRF
+        document.getElementById('irrfDe2').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto1').value || 0) + 0.01);
+        document.getElementById('irrfDe3').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto2').value || 0) + 0.01);
+        document.getElementById('irrfDe4').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto3').value || 0) + 0.01);
+        document.getElementById('irrfDe5').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto4').value || 0) + 0.01);
     }
 
     function salvarTabelas() {
@@ -183,6 +229,9 @@
         };
 
         localStorage.setItem('rhTabelasFiscais', JSON.stringify(dados));
+
+        // Atualiza os valores visuais novamente por garantia
+        atualizarLimites();
 
         const msg = document.getElementById('msgSucesso');
         msg.style.display = 'block';
