@@ -3,39 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RH - Tabelas Fiscais (2026)</title>
+    <title>RH - Tabelas Fiscais</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-body: #0d0e15; --bg-card: #151623; --text-main: #ffffff;
-            --text-muted: #8b8d9b; --accent-purple: #8a2be2; --accent-green: #2ecc71;
-            --accent-red: #ff4757; --border-color: #232533;
+            --bg-body: #09090b; --bg-card: #18181b; --border-color: #27272a;
+            --text-main: #f4f4f5; --text-muted: #a1a1aa;
+            --accent-purple: #8b5cf6; --accent-green: #10b981; --accent-red: #ef4444;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 20px; margin: 0; }
-        .container { background-color: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-top: 0; font-weight: 600; }
-        h3 { color: var(--text-main); margin-top: 25px; font-weight: 500; font-size: 16px; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 24px; margin: 0; -webkit-font-smoothing: antialiased; }
+        .container { background-color: var(--bg-card); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h2 { color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-top: 0; font-weight: 600; font-size: 20px;}
+        h3 { color: var(--text-main); margin-top: 32px; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px;}
 
-        .form-grid, .grid-geral { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        .grid-geral { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
         .form-group { display: flex; flex-direction: column; }
         
-        label { font-size: 12px; color: var(--text-muted); font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
-        input { width: 100%; padding: 12px; background: #0a0b10; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
-        input:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2); }
+        label { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;}
+        input { width: 100%; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; font-family: 'Inter', sans-serif; transition: 0.3s; }
+        input:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
         input.tabela-input { text-align: center; padding: 8px; }
 
-        button, .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 10px;}
-        .btn-salvar:hover { background-color: #7122b8; transform: translateY(-1px); }
+        button, .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 16px; font-family: 'Inter', sans-serif;}
+        .btn-salvar:hover { background-color: #7c3aed; transform: translateY(-1px); }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid var(--border-color); }
-        th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 16px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+        th, td { padding: 14px 16px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background-color: rgba(255,255,255,0.02); }
         
-        .col-texto { color: var(--text-muted); font-weight: bold; }
-
-        .msg-sucesso { display: none; background-color: rgba(46, 204, 113, 0.1); color: var(--accent-green); border: 1px solid rgba(46, 204, 113, 0.2); padding: 12px; border-radius: 8px; text-align: center; margin-top: 20px; font-weight: bold; }
+        .col-texto { color: var(--text-muted); font-weight: 500; }
+        .msg-sucesso { display: none; background-color: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -142,7 +142,6 @@
     document.addEventListener("DOMContentLoaded", carregarTabelas);
 
     function carregarTabelas() {
-        // Remove as deduções do INSS e carrega os dados limpos
         const dados = JSON.parse(localStorage.getItem('rhTabelasFiscais')) || {
             geral: { salarioMinimo: 1621.00, deducaoDependente: 189.59 },
             inss: { teto1: 1621.00, teto2: 2902.84, teto3: 4354.27, teto4: 8475.55 },
@@ -212,6 +211,5 @@
         setTimeout(() => { msg.style.display = 'none'; }, 3000);
     }
 </script>
-
 </body>
 </html>
