@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de RH</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        .lista-funcionarios { margin-top: 20px; }
+        .funcionario-item { padding: 10px; border-bottom: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Cadastro de Funcionário</h2>
+    <input type="text" id="nome" placeholder="Nome Completo">
+    <input type="text" id="cargo" placeholder="Cargo">
+    <input type="number" id="salario" placeholder="Salário Base (R$)">
+    <button onclick="salvarFuncionario()">Cadastrar</button>
+
+    <div class="lista-funcionarios">
+        <h3>Quadro de Funcionários</h3>
+        <div id="lista"></div>
+    </div>
+</div>
+
+<script>
+    // Carrega os dados salvos no localStorage ao abrir a página
+    document.addEventListener("DOMContentLoaded", renderizarLista);
+
+    function salvarFuncionario() {
+        const nome = document.getElementById('nome').value;
+        const cargo = document.getElementById('cargo').value;
+        const salario = document.getElementById('salario').value;
+
+        if(!nome || !cargo || !salario) {
+            alert("Preencha todos os campos!");
+            return;
+        }
+
+        const funcionario = { id: Date.now(), nome, cargo, salario };
+        
+        // Puxa a lista existente ou cria uma nova
+        let funcionarios = JSON.parse(localStorage.getItem('funcionariosRH')) || [];
+        funcionarios.push(funcionario);
+        
+        // Salva a lista atualizada
+        localStorage.setItem('funcionariosRH', JSON.stringify(funcionarios));
+        
+        // Limpa os campos e atualiza a tela
+        document.getElementById('nome').value = '';
+        document.getElementById('cargo').value = '';
+        document.getElementById('salario').value = '';
+        renderizarLista();
+    }
+
+    function renderizarLista() {
+        const listaDiv = document.getElementById('lista');
+        listaDiv.innerHTML = '';
+        let funcionarios = JSON.parse(localStorage.getItem('funcionariosRH')) || [];
+
+        funcionarios.forEach(f => {
+            listaDiv.innerHTML += `
+                <div class="funcionario-item">
+                    <strong>${f.nome}</strong> - ${f.cargo} (R$ ${f.salario})
+                </div>
+            `;
+        });
+    }
+</script>
+
+</body>
+</html>
