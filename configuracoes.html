@@ -6,102 +6,71 @@
     <title>RH - Tabelas Fiscais (2026)</title>
     <style>
         :root {
-    --bg-body: #0d0e15;
-    --bg-card: #151623;
-    --text-main: #ffffff;
-    --text-muted: #8b8d9b;
-    --accent-purple: #8a2be2;
-    --accent-green: #2ecc71;
-    --accent-red: #ff4757;
-    --border-color: #232533;
-}
+            --bg-body: #0d0e15;
+            --bg-card: #151623;
+            --text-main: #ffffff;
+            --text-muted: #8b8d9b;
+            --accent-purple: #8a2be2;
+            --accent-green: #2ecc71;
+            --accent-red: #ff4757;
+            --border-color: #232533;
+        }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-body); /* Fundo igual ao do painel */
-    color: var(--text-main);
-    padding: 20px;
-    margin: 0;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 20px;
+            margin: 0;
+        }
 
-/* Container Principal (Cards) */
-.container, .card {
-    background-color: var(--bg-card);
-    padding: 30px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    max-width: 900px;
-    margin: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
+        .container, .card {
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            max-width: 900px;
+            margin: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-h2 { color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-top: 0; font-weight: 600; }
-h3 { color: var(--text-main); margin-top: 25px; font-weight: 500; font-size: 16px; }
+        h2 { color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-top: 0; font-weight: 600; }
+        h3 { color: var(--text-main); margin-top: 25px; font-weight: 500; font-size: 16px; }
 
-/* Formulários e Inputs */
-.form-grid, .grid-geral, .controles { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
-.form-group { display: flex; flex-direction: column; }
-.form-group.full-width { grid-column: 1 / -1; }
+        .form-grid, .grid-geral, .controles { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
 
-.controles { display: flex; gap: 10px; } /* Especial para tela de holerite */
-.controles select { flex-grow: 1; }
+        label { font-size: 12px; color: var(--text-muted); font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
 
-label { font-size: 12px; color: var(--text-muted); font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
+        input, select {
+            width: 100%; padding: 12px; background: #0a0b10;
+            border: 1px solid var(--border-color); color: var(--text-main);
+            border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s;
+        }
 
-input, select {
-    width: 100%; padding: 12px; background: #0a0b10;
-    border: 1px solid var(--border-color); color: var(--text-main);
-    border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s;
-}
+        input:focus, select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2); }
+        input.tabela-input { text-align: center; padding: 8px; }
 
-input:focus, select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2); }
-input.tabela-input { text-align: center; padding: 8px; }
+        button, .btn-salvar {
+            padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px;
+        }
+        .btn-salvar, button { background-color: var(--accent-purple); width: 100%; margin-top: 10px;}
+        .btn-salvar:hover, button:hover { background-color: #7122b8; transform: translateY(-1px); }
 
-/* Botões */
-button, .btn-salvar, .btn-acao {
-    padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px;
-}
-.btn-salvar, button { background-color: var(--accent-purple); width: 100%; margin-top: 10px;}
-.btn-salvar:hover, button:hover { background-color: #7122b8; transform: translateY(-1px); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: rgba(255,255,255,0.02); }
 
-.btn-editar { background-color: transparent; border: 1px solid var(--accent-purple); color: var(--accent-purple); padding: 6px 12px; font-size: 12px; }
-.btn-editar:hover { background: rgba(138, 43, 226, 0.1); }
-.btn-excluir { background-color: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 6px 12px; font-size: 12px; }
-.btn-excluir:hover { background: rgba(255, 71, 87, 0.1); }
-
-/* Tabelas (Quadro de Funcionários e Configurações) */
-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
-th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
-th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background-color: rgba(255,255,255,0.02); }
-
-/* Mensagens de Sucesso */
-.msg-sucesso, .mensagem { background-color: rgba(46, 204, 113, 0.1); color: var(--accent-green); border: 1px solid rgba(46, 204, 113, 0.2); padding: 12px; border-radius: 8px; text-align: center; margin-top: 20px; font-weight: bold; }
-
-/* Especial: Holerite Visual (Folha de Papel) */
-.holerite-box { background: #fff; color: #111; border-radius: 4px; padding: 30px; margin-top: 30px; display: none; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
-.holerite-box h3 { color: #111; border-bottom: 2px solid #111; margin-top: 0; text-align: center;}
-.holerite-box table { border: 2px solid #111; border-radius: 0; }
-.holerite-box th { background-color: #f0f0f0; color: #111; border: 1px solid #111; text-align: center; }
-.holerite-box td { border: 1px solid #111; padding: 8px; text-align: right; color: #111;}
-.holerite-box td:nth-child(1) { text-align: left; }
-.totais { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 10px; border-top: 2px solid #111; padding-top: 10px; }
-.valor-liquido { color: #27ae60; font-size: 18px; }
-
-/* Impressão */
-@media print {
-    body { background: white; padding: 0; }
-    .controles, h2, .container { box-shadow: none; padding: 0; background: transparent; border: none;}
-    .holerite-box { display: block; border: none; box-shadow: none; padding: 0; margin: 0; }
-    h2, .controles { display: none; }
-}
+        .msg-sucesso { display: none; background-color: rgba(46, 204, 113, 0.1); color: var(--accent-green); border: 1px solid rgba(46, 204, 113, 0.2); padding: 12px; border-radius: 8px; text-align: center; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Parâmetros e Tabelas Fiscais</h2>
+    <h2>Parâmetros e Tabelas Fiscais (2026)</h2>
     
     <div class="grid-geral">
         <div class="form-group">
@@ -125,7 +94,7 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
         <tr><td>1</td><td><input type="number" id="inssTeto1" class="tabela-input"></td><td>7.5</td><td>0.00</td></tr>
         <tr><td>2</td><td><input type="number" id="inssTeto2" class="tabela-input"></td><td>9.0</td><td><input type="number" id="inssDed2" class="tabela-input"></td></tr>
         <tr><td>3</td><td><input type="number" id="inssTeto3" class="tabela-input"></td><td>12.0</td><td><input type="number" id="inssDed3" class="tabela-input"></td></tr>
-        <tr><td>4 (Teto)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td><td><input type="number" id="inssDed4" class="tabela-input"></td></tr>
+        <tr><td>4 (Teto Máx)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td><td><input type="number" id="inssDed4" class="tabela-input"></td></tr>
     </table>
 
     <h3>Tabela de IRRF</h3>
@@ -152,15 +121,15 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
 
     function carregarTabelas() {
         const dados = JSON.parse(localStorage.getItem('rhTabelasFiscais')) || {
-        geral: { salarioMinimo: 1621.00, deducaoDependente: 189.59 }, // Atualizado para o mínimo de 2026
-        inss: { 
-            teto1: 1621.00, 
-            teto2: 2902.84, ded2: 24.32, 
-            teto3: 4354.27, ded3: 111.40, 
-            teto4: 8475.55, ded4: 198.49 
-        },
-        irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
-    };
+            geral: { salarioMinimo: 1621.00, deducaoDependente: 189.59 },
+            inss: { 
+                teto1: 1621.00, 
+                teto2: 2902.84, ded2: 24.32, 
+                teto3: 4354.27, ded3: 111.40, 
+                teto4: 8475.55, ded4: 198.49 
+            },
+            irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
+        };
 
         document.getElementById('salarioMinimo').value = dados.geral.salarioMinimo;
         document.getElementById('deducaoDependente').value = dados.geral.deducaoDependente;
@@ -172,16 +141,18 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
 
         document.getElementById('irrfTeto1').value = dados.irrf.teto1;
         document.getElementById('irrfTeto2').value = dados.irrf.teto2;
-        document.getElementById('irrfDed2').value = dados.irrf.ded2;
         document.getElementById('irrfTeto3').value = dados.irrf.teto3;
-        document.getElementById('irrfDed3').value = dados.irrf.ded3;
         document.getElementById('irrfTeto4').value = dados.irrf.teto4;
+        
+        document.getElementById('irrfDed2').value = dados.irrf.ded2;
+        document.getElementById('irrfDed3').value = dados.irrf.ded3;
         document.getElementById('irrfDed4').value = dados.irrf.ded4;
         document.getElementById('irrfDed5').value = dados.irrf.ded5;
 
+        // Novas parcelas do INSS
         document.getElementById('inssDed2').value = dados.inss.ded2;
-    document.getElementById('inssDed3').value = dados.inss.ded3;
-    document.getElementById('inssDed4').value = dados.inss.ded4;
+        document.getElementById('inssDed3').value = dados.inss.ded3;
+        document.getElementById('inssDed4').value = dados.inss.ded4;
     }
 
     function salvarTabelas() {
@@ -190,15 +161,15 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
                 salarioMinimo: parseFloat(document.getElementById('salarioMinimo').value),
                 deducaoDependente: parseFloat(document.getElementById('deducaoDependente').value)
             },
-           inss: {
-        teto1: parseFloat(document.getElementById('inssTeto1').value),
-        teto2: parseFloat(document.getElementById('inssTeto2').value),
-        ded2: parseFloat(document.getElementById('inssDed2').value),
-        teto3: parseFloat(document.getElementById('inssTeto3').value),
-        ded3: parseFloat(document.getElementById('inssDed3').value),
-        teto4: parseFloat(document.getElementById('inssTeto4').value),
-        ded4: parseFloat(document.getElementById('inssDed4').value)
-    },
+            inss: {
+                teto1: parseFloat(document.getElementById('inssTeto1').value),
+                teto2: parseFloat(document.getElementById('inssTeto2').value),
+                ded2: parseFloat(document.getElementById('inssDed2').value),
+                teto3: parseFloat(document.getElementById('inssTeto3').value),
+                ded3: parseFloat(document.getElementById('inssDed3').value),
+                teto4: parseFloat(document.getElementById('inssTeto4').value),
+                ded4: parseFloat(document.getElementById('inssDed4').value)
+            },
             irrf: {
                 teto1: parseFloat(document.getElementById('irrfTeto1').value),
                 teto2: parseFloat(document.getElementById('irrfTeto2').value),
