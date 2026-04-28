@@ -8,96 +8,89 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            /* Paleta Zinc Moderna (Padrão Tailwind) */
-            --bg-body: #09090b; 
-            --bg-card: #18181b; 
-            --border-color: #27272a;
-            --text-main: #f4f4f5;
-            --text-muted: #a1a1aa;
-            /* Cores de Destaque Vibrantes */
-            --accent-purple: #8b5cf6;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-orange: #f59e0b;
+            --bg-body: #09090b; --bg-card: #18181b; --border-color: #27272a;
+            --text-main: #f4f4f5; --text-muted: #a1a1aa;
+            --accent-purple: #8b5cf6; --accent-green: #10b981;
+            --accent-red: #ef4444; --accent-orange: #f59e0b;
         }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-body); 
-            color: var(--text-main); 
-            padding: 24px; 
-            margin: 0; 
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 24px; margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Grid de Widgets Superiores */
+        /* Widgets e Gráficos Existentes */
         .widgets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 24px; }
-        .widget-card { 
-            background-color: var(--bg-card); 
-            padding: 24px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border-color); 
-            display: flex; justify-content: space-between; align-items: center; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .widget-card:hover { 
-            transform: translateY(-4px); 
-            border-color: var(--accent-purple); 
-            box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.1), 0 4px 6px -2px rgba(139, 92, 246, 0.05);
-        }
+        .widget-card { background-color: var(--bg-card); padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .widget-card:hover { transform: translateY(-4px); border-color: var(--accent-purple); }
         .widget-info h3 { margin: 0; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;}
         .widget-info p { margin: 8px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em;}
         .widget-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; justify-content: center; align-items: center; font-size: 24px; border: 1px solid rgba(255,255,255,0.05);}
 
-        /* Grid de Gráficos */
         .charts-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px; }
-        .chart-container { 
-            background-color: var(--bg-card); 
-            padding: 24px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border-color); 
-            position: relative; 
-            height: 280px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        .chart-container { background-color: var(--bg-card); padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); position: relative; height: 280px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
 
-        /* Layout em Colunas Inferior */
-        .content-grid { display: grid; grid-template-columns: 1.2fr 2fr 1.2fr; gap: 24px; }
-        .panel { 
-            background-color: var(--bg-card); 
-            padding: 24px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border-color); 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .panel-title { 
-            font-size: 14px; 
-            color: var(--text-main); 
-            margin-top: 0; margin-bottom: 20px; 
-            font-weight: 600; 
-            display: flex; align-items: center; gap: 8px;
-        }
+        .panel-title { font-size: 14px; color: var(--text-main); margin-top: 0; margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+        /* ================= NOVAS SEÇÕES: CALENDÁRIO E EVENTOS ================= */
+        .calendar-section { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .cal-panel { background-color: var(--bg-card); padding: 24px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         
-        /* Alertas e Listas */
+        /* Cabeçalho do Calendário */
+        .cal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .cal-month { font-size: 28px; font-weight: 800; color: var(--text-main); text-transform: uppercase; line-height: 1; letter-spacing: -1px;}
+        .cal-year { font-size: 14px; font-weight: 600; color: var(--accent-purple); margin-top: 4px; display: block;}
+        .cal-nav { display: flex; gap: 8px; align-items: center; }
+        .btn-cal { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-family: 'Inter'; font-weight: 600; font-size: 12px; transition: 0.2s;}
+        .btn-cal:hover { background: rgba(255,255,255,0.1); }
+        .btn-arrows { display: flex; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .btn-arrows button { background: transparent; border: none; color: var(--text-main); padding: 8px 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-arrows button:hover { background: rgba(255,255,255,0.1); }
+
+        /* Grid do Calendário */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .cal-day-name { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+        .cal-day { height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; border: 1px solid transparent; position: relative; }
+        .cal-day:hover:not(.muted) { background: rgba(255,255,255,0.05); }
+        .cal-day.muted { color: #3f3f46; cursor: default; font-weight: 400;}
+        .cal-day.active { background: var(--accent-purple); color: white; box-shadow: 0 4px 12px rgba(139,92,246,0.4); }
+        .cal-day.has-event { border-color: rgba(245, 158, 11, 0.3); }
+        
+        .dot-container { display: flex; gap: 3px; position: absolute; bottom: 4px; }
+        .cal-dot { width: 4px; height: 4px; border-radius: 50%; background-color: var(--accent-orange); }
+        .cal-dot.green { background-color: var(--accent-green); }
+
+        /* Painel de Eventos do Dia */
+        .events-header { margin-bottom: 24px; }
+        .events-title { font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; margin: 0 0 4px 0;}
+        .events-date { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase;}
+        
+        .event-input-group { display: flex; gap: 12px; margin-bottom: 24px; }
+        .event-input { flex-grow: 1; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); padding: 12px 16px; border-radius: 12px; font-family: 'Inter'; font-size: 14px; outline: none; transition: 0.3s;}
+        .event-input:focus { border-color: var(--accent-purple); }
+        .btn-add-event { background: var(--accent-purple); border: none; color: white; width: 48px; border-radius: 12px; font-size: 20px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
+        .btn-add-event:hover { background: #7c3aed; transform: scale(1.05); }
+
+        .events-list { display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .events-list::-webkit-scrollbar { width: 4px; }
+        .events-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+        
+        .event-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .event-item-text { font-size: 13px; color: var(--text-main); font-weight: 500; }
+        .btn-delete-event { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 4px;}
+        .btn-delete-event:hover { color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
+
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; color: #52525b; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; gap: 12px;}
+        .empty-state svg { width: 36px; height: 36px; opacity: 0.5; }
+
+        /* Painéis Inferiores */
+        .content-grid { display: grid; grid-template-columns: 1.2fr 2fr 1.2fr; gap: 24px; }
+        .panel { background-color: var(--bg-card); padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .alert-item { display: flex; justify-content: space-between; color: var(--accent-red); font-size: 14px; font-weight: 600; margin-bottom: 4px;}
         .alert-sub { color: var(--text-muted); font-size: 12px; margin-bottom: 24px; display: block; line-height: 1.5;}
-        
         .prazo-list { list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--text-muted);}
         .prazo-list li { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
         .prazo-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .prazo-list li span { color: var(--text-main); font-weight: 600; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;}
-
-        .activity-item { 
-            font-size: 13px; padding: 12px 16px; 
-            border-left: 4px solid var(--accent-purple); 
-            background: linear-gradient(90deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0) 100%); 
-            margin-bottom: 12px; border-radius: 0 8px 8px 0; 
-        }
+        .activity-item { font-size: 13px; padding: 12px 16px; border-left: 4px solid var(--accent-purple); background: linear-gradient(90deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0) 100%); margin-bottom: 12px; border-radius: 0 8px 8px 0; }
         .activity-item small { display: block; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;}
-        
-        /* Custom Scrollbar */
         .scrollable { max-height: 220px; overflow-y: auto; padding-right: 8px; }
         .scrollable::-webkit-scrollbar { width: 4px; }
         .scrollable::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 10px; }
@@ -125,13 +118,48 @@
     </div>
 
     <div class="charts-grid">
-        <div class="chart-container">
-            <h3 class="panel-title">📊 Status de Férias</h3>
-            <canvas id="graficoFerias"></canvas>
+        <div class="chart-container"><h3 class="panel-title">📊 Status de Férias</h3><canvas id="graficoFerias"></canvas></div>
+        <div class="chart-container"><h3 class="panel-title">💼 Custo por Cargo (Top 5)</h3><canvas id="graficoCargos"></canvas></div>
+    </div>
+
+    <div class="calendar-section">
+        <div class="cal-panel">
+            <div class="cal-header">
+                <div>
+                    <div class="cal-month" id="calMonthDisplay">MÊS</div>
+                    <div class="cal-year" id="calYearDisplay">2026</div>
+                </div>
+                <div class="cal-nav">
+                    <button class="btn-cal" onclick="calendarioHoje()">HOJE</button>
+                    <div class="btn-arrows">
+                        <button onclick="mudarMes(-1)">&lt;</button>
+                        <button onclick="mudarMes(1)">&gt;</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cal-grid" id="calDaysHeader">
+                <div class="cal-day-name">DOM</div><div class="cal-day-name">SEG</div><div class="cal-day-name">TER</div>
+                <div class="cal-day-name">QUA</div><div class="cal-day-name">QUI</div><div class="cal-day-name">SEX</div>
+                <div class="cal-day-name">SÁB</div>
+            </div>
+            <div class="cal-grid" id="calGrid">
+                </div>
         </div>
-        <div class="chart-container">
-            <h3 class="panel-title">💼 Custo por Cargo (Top 5)</h3>
-            <canvas id="graficoCargos"></canvas>
+
+        <div class="cal-panel">
+            <div class="events-header">
+                <h3 class="events-title">EVENTOS DO DIA</h3>
+                <div class="events-date" id="selectedDateDisplay">SELECIONE UMA DATA</div>
+            </div>
+
+            <div class="event-input-group">
+                <input type="text" id="novoEventoInput" class="event-input" placeholder="Nova nota..." onkeypress="if(event.key === 'Enter') adicionarEvento()">
+                <button class="btn-add-event" onclick="adicionarEvento()">+</button>
+            </div>
+
+            <div class="events-list" id="eventsList">
+                </div>
         </div>
     </div>
 
@@ -150,31 +178,193 @@
                 <li>Salário <span>5º Dia Útil</span></li>
             </ul>
         </div>
-
         <div class="panel">
             <h3 class="panel-title">📅 Mural de Descanso</h3>
-            <div id="muralFerias" class="scrollable" style="font-size: 13px;">
-                </div>
+            <div id="muralFerias" class="scrollable" style="font-size: 13px;"></div>
         </div>
-
         <div class="panel">
             <h3 class="panel-title">📝 Atividades Recentes</h3>
             <div id="containerAtividades" class="scrollable">
-                <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px;">
-                    Nenhum registro recente no sistema.
-                </div>
+                <div class="empty-state" style="padding: 30px 0;">Nenhum registro recente.</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuração Global de Cores para o Chart.js
+        // Configuração Gráficos
         Chart.defaults.color = '#a1a1aa';
         Chart.defaults.font.family = "'Inter', sans-serif";
-        Chart.defaults.font.size = 12;
 
+        // ================= LÓGICA DO CALENDÁRIO =================
+        let dataAtualCal = new Date(); // Mês que está sendo visualizado
+        let dataSelecionada = new Date(); // Dia clicado
+        const mesesNomes = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+        const mesesAbrev = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+
+        function initCalendario() {
+            renderizarCalendario();
+            renderizarEventos();
+        }
+
+        function formataDataISO(dateObj) {
+            // Retorna formato YYYY-MM-DD para busca exata
+            return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+        }
+
+        function mudarMes(direcao) {
+            dataAtualCal.setMonth(dataAtualCal.getMonth() + direcao);
+            renderizarCalendario();
+        }
+
+        function calendarioHoje() {
+            dataAtualCal = new Date();
+            dataSelecionada = new Date();
+            renderizarCalendario();
+            renderizarEventos();
+        }
+
+        function selecionarDia(ano, mes, dia) {
+            dataSelecionada = new Date(ano, mes, dia);
+            renderizarCalendario(); // Para atualizar a bolinha roxa
+            renderizarEventos();
+        }
+
+        function renderizarCalendario() {
+            const ano = dataAtualCal.getFullYear();
+            const mes = dataAtualCal.getMonth();
+            
+            document.getElementById('calMonthDisplay').innerText = mesesNomes[mes];
+            document.getElementById('calYearDisplay').innerText = ano;
+
+            const primeiroDiaMes = new Date(ano, mes, 1).getDay(); // 0 (Dom) a 6 (Sab)
+            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+            const diasMesAnterior = new Date(ano, mes, 0).getDate();
+
+            const calGrid = document.getElementById('calGrid');
+            calGrid.innerHTML = '';
+
+            // Puxa todos os eventos salvos para colocar as bolinhas laranjas
+            const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
+
+            let htmlDias = '';
+            
+            // Preenche dias do mês anterior
+            for (let i = primeiroDiaMes; i > 0; i--) {
+                htmlDias += `<div class="cal-day muted">${diasMesAnterior - i + 1}</div>`;
+            }
+
+            // Preenche dias do mês atual
+            const hojeReal = new Date();
+            for (let i = 1; i <= diasNoMes; i++) {
+                let dataIteracao = new Date(ano, mes, i);
+                let isoFormat = formataDataISO(dataIteracao);
+                
+                // Verifica se é hoje
+                let ehHoje = (i === hojeReal.getDate() && mes === hojeReal.getMonth() && ano === hojeReal.getFullYear());
+                // Verifica se é o selecionado
+                let ehSelecionado = (i === dataSelecionada.getDate() && mes === dataSelecionada.getMonth() && ano === dataSelecionada.getFullYear());
+                
+                // Verifica se tem eventos neste dia
+                let eventosNoDia = todosEventos.filter(ev => ev.data === isoFormat);
+                let temEvento = eventosNoDia.length > 0;
+
+                let classes = 'cal-day';
+                if (ehSelecionado) classes += ' active';
+                if (temEvento && !ehSelecionado) classes += ' has-event';
+
+                let dotHtml = '';
+                if (temEvento) {
+                    dotHtml = `<div class="dot-container">`;
+                    // Mostra até 3 bolinhas dependendo da qtd de eventos
+                    for(let b=0; b < Math.min(eventosNoDia.length, 3); b++){
+                        dotHtml += `<div class="cal-dot ${ehHoje ? 'green' : ''}"></div>`;
+                    }
+                    dotHtml += `</div>`;
+                }
+
+                htmlDias += `<div class="${classes}" onclick="selecionarDia(${ano}, ${mes}, ${i})">${i}${dotHtml}</div>`;
+            }
+
+            // Preenche resto do grid para fechar linhas (Total 42 slots = 6 semanas)
+            const slotsRestantes = 42 - (primeiroDiaMes + diasNoMes);
+            for (let i = 1; i <= slotsRestantes; i++) {
+                htmlDias += `<div class="cal-day muted">${i}</div>`;
+            }
+
+            calGrid.innerHTML = htmlDias;
+        }
+
+        // ================= LÓGICA DE EVENTOS =================
+        function renderizarEventos() {
+            // Atualiza Título (Ex: 28 DE ABR.)
+            document.getElementById('selectedDateDisplay').innerText = `${dataSelecionada.getDate()} DE ${mesesAbrev[dataSelecionada.getMonth()]}.`;
+            
+            const list = document.getElementById('eventsList');
+            const isoSelecionada = formataDataISO(dataSelecionada);
+            const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
+            
+            const eventosDoDia = todosEventos.filter(ev => ev.data === isoSelecionada);
+
+            if (eventosDoDia.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Sem eventos agendados
+                    </div>
+                `;
+            } else {
+                let html = '';
+                eventosDoDia.forEach(ev => {
+                    html += `
+                        <div class="event-item">
+                            <span class="event-item-text">${ev.texto}</span>
+                            <button class="btn-delete-event" onclick="deletarEvento(${ev.id})" title="Remover">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            }
+        }
+
+        function adicionarEvento() {
+            const input = document.getElementById('novoEventoInput');
+            const texto = input.value.trim();
+            
+            if (texto === "") return;
+
+            const novoEvento = {
+                id: Date.now(),
+                data: formataDataISO(dataSelecionada),
+                texto: texto
+            };
+
+            const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
+            todosEventos.push(novoEvento);
+            localStorage.setItem('rhEventos', JSON.stringify(todosEventos));
+
+            input.value = '';
+            renderizarEventos();
+            renderizarCalendario(); // Para atualizar a borda laranja/bolinha no grid
+        }
+
+        function deletarEvento(id) {
+            let todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
+            todosEventos = todosEventos.filter(ev => ev.id !== id);
+            localStorage.setItem('rhEventos', JSON.stringify(todosEventos));
+            
+            renderizarEventos();
+            renderizarCalendario(); // Atualiza bolinhas caso o dia fique sem eventos
+        }
+
+
+        // ================= LÓGICA DA DASHBOARD (GRÁFICOS E DADOS) =================
         document.addEventListener("DOMContentLoaded", () => {
             atualizarDashboard();
+            initCalendario();
         });
 
         function atualizarDashboard() {
@@ -242,16 +432,10 @@
                     datasets: [{
                         data: [statusFerias.aquisitivo, statusFerias.adquirido, statusFerias.vencendo],
                         backgroundColor: ['#8b5cf6', '#10b981', '#ef4444'],
-                        borderWidth: 0,
-                        hoverOffset: 4
+                        borderWidth: 0, hoverOffset: 4
                     }]
                 },
-                options: { 
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } } },
-                    cutout: '75%',
-                    layout: { padding: 10 }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } } }, cutout: '75%', layout: { padding: 10 } }
             });
 
             let cargosOrdenados = Object.keys(custoPorCargo).sort((a, b) => custoPorCargo[b] - custoPorCargo[a]).slice(0, 5);
@@ -267,18 +451,13 @@
                         label: 'Custo Total (R$)',
                         data: valoresCargos.length > 0 ? valoresCargos : [0],
                         backgroundColor: 'rgba(139, 92, 246, 0.8)',
-                        borderRadius: 6,
-                        barThickness: 24
+                        borderRadius: 6, barThickness: 24
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
-                    responsive: true, maintainAspectRatio: false,
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { 
-                        x: { grid: { color: 'rgba(255,255,255,0.03)' }, border: {display: false} },
-                        y: { grid: { display: false }, border: {display: false} }
-                    },
+                    scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' }, border: {display: false} }, y: { grid: { display: false }, border: {display: false} } },
                     layout: { padding: { right: 20 } }
                 }
             });
