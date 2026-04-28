@@ -3,71 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RH - Configurações Fiscais</title>
+    <title>RH - Tabelas Fiscais (2026)</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; }
-        .card { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        h2 { color: #333; margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
-        input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-salvar { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
-        .btn-salvar:hover { background-color: #0056b3; }
-        .mensagem { display: none; padding: 10px; background-color: #d4edda; color: #155724; margin-top: 15px; border-radius: 5px; text-align: center; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #2c3e50; padding-bottom: 10px; color: #2c3e50; }
+        h3 { margin-top: 25px; color: #34495e; }
+        
+        .grid-geral { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f8f9fa; }
+        input.tabela-input { width: 90px; text-align: center; }
+
+        .btn-salvar { width: 100%; padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        .btn-salvar:hover { background-color: #219150; }
+        
+        .msg-sucesso { display: none; background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Parâmetros Fiscais (2026)</h2>
+<div class="container">
+    <h2>Parâmetros e Tabelas Fiscais</h2>
     
-    <div class="form-group">
-        <label for="salarioMinimo">Salário Mínimo Vigente (R$):</label>
-        <input type="number" id="salarioMinimo" step="0.01">
+    <div class="grid-geral">
+        <div class="form-group">
+            <label>Salário Mínimo Vigente (R$):</label>
+            <input type="number" id="salarioMinimo" step="0.01">
+        </div>
+        <div class="form-group">
+            <label>Dedução por Dependente IRRF (R$):</label>
+            <input type="number" id="deducaoDependente" step="0.01">
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="deducaoDependente">Dedução por Dependente - IRRF (R$):</label>
-        <input type="number" id="deducaoDependente" step="0.01">
-    </div>
+    <h3>Tabela de INSS (Progressivo)</h3>
+    <table>
+        <tr>
+            <th>Faixa</th>
+            <th>Até (R$)</th>
+            <th>Alíquota (%)</th>
+        </tr>
+        <tr><td>1</td><td><input type="number" id="inssTeto1" class="tabela-input"></td><td>7.5</td></tr>
+        <tr><td>2</td><td><input type="number" id="inssTeto2" class="tabela-input"></td><td>9.0</td></tr>
+        <tr><td>3</td><td><input type="number" id="inssTeto3" class="tabela-input"></td><td>12.0</td></tr>
+        <tr><td>4 (Teto Máximo)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td></tr>
+    </table>
 
-    <div class="form-group">
-        <label for="tetoInss">Teto Máximo do INSS (R$):</label>
-        <input type="number" id="tetoInss" step="0.01">
-    </div>
+    <h3>Tabela de IRRF</h3>
+    <table>
+        <tr>
+            <th>Faixa</th>
+            <th>Até (R$)</th>
+            <th>Alíquota (%)</th>
+            <th>Parcela a Deduzir (R$)</th>
+        </tr>
+        <tr><td>1 (Isento)</td><td><input type="number" id="irrfTeto1" class="tabela-input"></td><td>0.0</td><td>0.00</td></tr>
+        <tr><td>2</td><td><input type="number" id="irrfTeto2" class="tabela-input"></td><td>7.5</td><td><input type="number" id="irrfDed2" class="tabela-input"></td></tr>
+        <tr><td>3</td><td><input type="number" id="irrfTeto3" class="tabela-input"></td><td>15.0</td><td><input type="number" id="irrfDed3" class="tabela-input"></td></tr>
+        <tr><td>4</td><td><input type="number" id="irrfTeto4" class="tabela-input"></td><td>22.5</td><td><input type="number" id="irrfDed4" class="tabela-input"></td></tr>
+        <tr><td>5 (Acima de)</td><td>Infinidade</td><td>27.5</td><td><input type="number" id="irrfDed5" class="tabela-input"></td></tr>
+    </table>
 
-    <button class="btn-salvar" onclick="salvarConfiguracoes()">Salvar Parâmetros</button>
-    <div id="msgSucesso" class="mensagem">Configurações salvas com sucesso!</div>
+    <button class="btn-salvar" onclick="salvarTabelas()">Salvar Tabelas no Sistema</button>
+    <div id="msgSucesso" class="msg-sucesso">Tabelas atualizadas e salvas com sucesso!</div>
 </div>
 
 <script>
-    // Executa ao carregar a página para preencher com os dados salvos ou valores padrão
-    document.addEventListener("DOMContentLoaded", carregarConfiguracoes);
+    document.addEventListener("DOMContentLoaded", carregarTabelas);
 
-    function carregarConfiguracoes() {
-        // Tenta buscar as configurações salvas. Se não existirem, usa valores zerados ou iniciais
-        const configSalva = JSON.parse(localStorage.getItem('parametrosFiscaisRH')) || {
-            salarioMinimo: 1412.00,
-            deducaoDependente: 189.59,
-            tetoInss: 7786.02
+    function carregarTabelas() {
+        const dados = JSON.parse(localStorage.getItem('rhTabelasFiscais')) || {
+            geral: { salarioMinimo: 1412.00, deducaoDependente: 189.59 },
+            inss: { teto1: 1412.00, teto2: 2666.68, teto3: 4000.03, teto4: 7786.02 },
+            irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
         };
 
-        document.getElementById('salarioMinimo').value = configSalva.salarioMinimo;
-        document.getElementById('deducaoDependente').value = configSalva.deducaoDependente;
-        document.getElementById('tetoInss').value = configSalva.tetoInss;
+        document.getElementById('salarioMinimo').value = dados.geral.salarioMinimo;
+        document.getElementById('deducaoDependente').value = dados.geral.deducaoDependente;
+        
+        document.getElementById('inssTeto1').value = dados.inss.teto1;
+        document.getElementById('inssTeto2').value = dados.inss.teto2;
+        document.getElementById('inssTeto3').value = dados.inss.teto3;
+        document.getElementById('inssTeto4').value = dados.inss.teto4;
+
+        document.getElementById('irrfTeto1').value = dados.irrf.teto1;
+        document.getElementById('irrfTeto2').value = dados.irrf.teto2;
+        document.getElementById('irrfDed2').value = dados.irrf.ded2;
+        document.getElementById('irrfTeto3').value = dados.irrf.teto3;
+        document.getElementById('irrfDed3').value = dados.irrf.ded3;
+        document.getElementById('irrfTeto4').value = dados.irrf.teto4;
+        document.getElementById('irrfDed4').value = dados.irrf.ded4;
+        document.getElementById('irrfDed5').value = dados.irrf.ded5;
     }
 
-    function salvarConfiguracoes() {
-        const config = {
-            salarioMinimo: parseFloat(document.getElementById('salarioMinimo').value),
-            deducaoDependente: parseFloat(document.getElementById('deducaoDependente').value),
-            tetoInss: parseFloat(document.getElementById('tetoInss').value)
+    function salvarTabelas() {
+        const dados = {
+            geral: {
+                salarioMinimo: parseFloat(document.getElementById('salarioMinimo').value),
+                deducaoDependente: parseFloat(document.getElementById('deducaoDependente').value)
+            },
+            inss: {
+                teto1: parseFloat(document.getElementById('inssTeto1').value),
+                teto2: parseFloat(document.getElementById('inssTeto2').value),
+                teto3: parseFloat(document.getElementById('inssTeto3').value),
+                teto4: parseFloat(document.getElementById('inssTeto4').value)
+            },
+            irrf: {
+                teto1: parseFloat(document.getElementById('irrfTeto1').value),
+                teto2: parseFloat(document.getElementById('irrfTeto2').value),
+                ded2: parseFloat(document.getElementById('irrfDed2').value),
+                teto3: parseFloat(document.getElementById('irrfTeto3').value),
+                ded3: parseFloat(document.getElementById('irrfDed3').value),
+                teto4: parseFloat(document.getElementById('irrfTeto4').value),
+                ded4: parseFloat(document.getElementById('irrfDed4').value),
+                ded5: parseFloat(document.getElementById('irrfDed5').value)
+            }
         };
 
-        // Salva os dados no navegador
-        localStorage.setItem('parametrosFiscaisRH', JSON.stringify(config));
+        localStorage.setItem('rhTabelasFiscais', JSON.stringify(dados));
 
-        // Mostra mensagem de sucesso temporária
         const msg = document.getElementById('msgSucesso');
         msg.style.display = 'block';
         setTimeout(() => { msg.style.display = 'none'; }, 3000);
