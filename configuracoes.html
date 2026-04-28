@@ -54,42 +54,37 @@
         </div>
     </div>
 
-    <h3>Tabela de INSS (Progressivo)</h3>
+    <h3>Tabela de INSS (Progressivo Oficial)</h3>
     <table>
         <tr>
             <th>Faixa</th>
             <th>De (R$)</th>
             <th>Até (R$)</th>
             <th>Alíquota (%)</th>
-            <th>Parcela a Deduzir (R$)</th>
         </tr>
         <tr>
             <td>1</td>
             <td class="col-texto">0,00</td>
             <td><input type="number" id="inssTeto1" class="tabela-input" onchange="atualizarLimites()"></td>
             <td class="col-texto">7.5</td>
-            <td class="col-texto">0,00</td>
         </tr>
         <tr>
             <td>2</td>
-            <td class="col-texto" id="inssDe2">1.621,01</td>
+            <td class="col-texto" id="inssDe2">-</td>
             <td><input type="number" id="inssTeto2" class="tabela-input" onchange="atualizarLimites()"></td>
             <td class="col-texto">9.0</td>
-            <td><input type="number" id="inssDed2" class="tabela-input"></td>
         </tr>
         <tr>
             <td>3</td>
-            <td class="col-texto" id="inssDe3">2.902,85</td>
+            <td class="col-texto" id="inssDe3">-</td>
             <td><input type="number" id="inssTeto3" class="tabela-input" onchange="atualizarLimites()"></td>
             <td class="col-texto">12.0</td>
-            <td><input type="number" id="inssDed3" class="tabela-input"></td>
         </tr>
         <tr>
             <td>4 (Teto Máx)</td>
-            <td class="col-texto" id="inssDe4">4.354,28</td>
+            <td class="col-texto" id="inssDe4">-</td>
             <td><input type="number" id="inssTeto4" class="tabela-input"></td>
             <td class="col-texto">14.0</td>
-            <td><input type="number" id="inssDed4" class="tabela-input"></td>
         </tr>
     </table>
 
@@ -111,28 +106,28 @@
         </tr>
         <tr>
             <td>2</td>
-            <td class="col-texto" id="irrfDe2">2.259,21</td>
+            <td class="col-texto" id="irrfDe2">-</td>
             <td><input type="number" id="irrfTeto2" class="tabela-input" onchange="atualizarLimites()"></td>
             <td class="col-texto">7.5</td>
             <td><input type="number" id="irrfDed2" class="tabela-input"></td>
         </tr>
         <tr>
             <td>3</td>
-            <td class="col-texto" id="irrfDe3">2.826,66</td>
+            <td class="col-texto" id="irrfDe3">-</td>
             <td><input type="number" id="irrfTeto3" class="tabela-input" onchange="atualizarLimites()"></td>
             <td class="col-texto">15.0</td>
             <td><input type="number" id="irrfDed3" class="tabela-input"></td>
         </tr>
         <tr>
             <td>4</td>
-            <td class="col-texto" id="irrfDe4">3.751,06</td>
+            <td class="col-texto" id="irrfDe4">-</td>
             <td><input type="number" id="irrfTeto4" class="tabela-input" onchange="atualizarLimites()"></td>
             <td class="col-texto">22.5</td>
             <td><input type="number" id="irrfDed4" class="tabela-input"></td>
         </tr>
         <tr>
             <td>5</td>
-            <td class="col-texto" id="irrfDe5">4.664,69</td>
+            <td class="col-texto" id="irrfDe5">-</td>
             <td class="col-texto">Infinidade</td>
             <td class="col-texto">27.5</td>
             <td><input type="number" id="irrfDed5" class="tabela-input"></td>
@@ -140,38 +135,28 @@
     </table>
 
     <button class="btn-salvar" onclick="salvarTabelas()">Salvar Tabelas no Sistema</button>
-    <div id="msgSucesso" class="msg-sucesso">Tabelas atualizadas e salvas com sucesso!</div>
+    <div id="msgSucesso" class="msg-sucesso">Tabelas atualizadas com sucesso!</div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", carregarTabelas);
 
     function carregarTabelas() {
+        // Remove as deduções do INSS e carrega os dados limpos
         const dados = JSON.parse(localStorage.getItem('rhTabelasFiscais')) || {
             geral: { salarioMinimo: 1621.00, deducaoDependente: 189.59 },
-            inss: { 
-                teto1: 1621.00, 
-                teto2: 2902.84, ded2: 24.32, 
-                teto3: 4354.27, ded3: 111.40, 
-                teto4: 8475.55, ded4: 198.49 
-            },
+            inss: { teto1: 1621.00, teto2: 2902.84, teto3: 4354.27, teto4: 8475.55 },
             irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
         };
 
-        // Geral
         document.getElementById('salarioMinimo').value = dados.geral.salarioMinimo;
         document.getElementById('deducaoDependente').value = dados.geral.deducaoDependente;
         
-        // INSS
         document.getElementById('inssTeto1').value = dados.inss.teto1;
         document.getElementById('inssTeto2').value = dados.inss.teto2;
         document.getElementById('inssTeto3').value = dados.inss.teto3;
         document.getElementById('inssTeto4').value = dados.inss.teto4;
-        document.getElementById('inssDed2').value = dados.inss.ded2;
-        document.getElementById('inssDed3').value = dados.inss.ded3;
-        document.getElementById('inssDed4').value = dados.inss.ded4;
 
-        // IRRF
         document.getElementById('irrfTeto1').value = dados.irrf.teto1;
         document.getElementById('irrfTeto2').value = dados.irrf.teto2;
         document.getElementById('irrfTeto3').value = dados.irrf.teto3;
@@ -181,20 +166,14 @@
         document.getElementById('irrfDed4').value = dados.irrf.ded4;
         document.getElementById('irrfDed5').value = dados.irrf.ded5;
 
-        // Atualiza os campos visuais "De (R$)"
         atualizarLimites();
     }
 
     function atualizarLimites() {
-        // Formata os textos para exibir no padrão "1.621,01"
         const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        // Atualiza "De" do INSS
         document.getElementById('inssDe2').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto1').value || 0) + 0.01);
         document.getElementById('inssDe3').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto2').value || 0) + 0.01);
         document.getElementById('inssDe4').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto3').value || 0) + 0.01);
-
-        // Atualiza "De" do IRRF
         document.getElementById('irrfDe2').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto1').value || 0) + 0.01);
         document.getElementById('irrfDe3').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto2').value || 0) + 0.01);
         document.getElementById('irrfDe4').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto3').value || 0) + 0.01);
@@ -210,11 +189,8 @@
             inss: {
                 teto1: parseFloat(document.getElementById('inssTeto1').value),
                 teto2: parseFloat(document.getElementById('inssTeto2').value),
-                ded2: parseFloat(document.getElementById('inssDed2').value),
                 teto3: parseFloat(document.getElementById('inssTeto3').value),
-                ded3: parseFloat(document.getElementById('inssDed3').value),
-                teto4: parseFloat(document.getElementById('inssTeto4').value),
-                ded4: parseFloat(document.getElementById('inssDed4').value)
+                teto4: parseFloat(document.getElementById('inssTeto4').value)
             },
             irrf: {
                 teto1: parseFloat(document.getElementById('irrfTeto1').value),
@@ -229,8 +205,6 @@
         };
 
         localStorage.setItem('rhTabelasFiscais', JSON.stringify(dados));
-
-        // Atualiza os valores visuais novamente por garantia
         atualizarLimites();
 
         const msg = document.getElementById('msgSucesso');
