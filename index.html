@@ -3,41 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HCM Master - Gestão de Operações</title>
-    <link rel="stylesheet" href="style.css">
+    <title>HCM Master - Gestão de RH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #09090b; 
+            --bg-card: #18181b; 
+            --border-color: #27272a;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --accent-purple: #8b5cf6;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex; height: 100vh; overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .sidebar {
+            width: 260px; background-color: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column;
+        }
+
+        .logo-area {
+            padding: 30px 20px; text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .logo-area h1 {
+            margin: 0; font-size: 22px; font-weight: 700;
+            background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .logo-area p { margin: 5px 0 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
+
+        .menu-item {
+            padding: 16px 24px; color: var(--text-muted);
+            text-decoration: none; display: block;
+            font-size: 14px; font-weight: 500;
+            transition: all 0.3s ease; border-right: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-item:hover { background-color: rgba(255,255,255,0.03); color: var(--text-main); }
+        
+        .menu-item.active {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--accent-purple);
+            border-right: 3px solid var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .content-area { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-body); }
+        
+        iframe { width: 100%; height: 100%; border: none; background-color: transparent; }
+    </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="logo-area">
-            <div class="logo-icon">⚡</div>
-            <div>
-                <div>HCM Master</div>
-                <div style="font-size: 10px; font-weight: normal; color: var(--text-muted);">ENTERPRISE</div>
-            </div>
+            <h1>HCM Master</h1>
+            <p>RH & Departamento Pessoal</p>
         </div>
-        
         <a class="menu-item active" onclick="carregarPagina('dashboard-inicio.html', this)">📊 Dashboard</a>
         <a class="menu-item" onclick="carregarPagina('funcionarios.html', this)">👥 Funcionários</a>
         <a class="menu-item" onclick="carregarPagina('holerite.html', this)">💰 Cálculo Mensal</a>
         <a class="menu-item" onclick="carregarPagina('configuracoes.html', this)">⚙️ Tabelas Fiscais</a>
         <a class="menu-item" onclick="carregarPagina('documentos.html', this)">🗂️ Documentos & EPIs</a>
         <a class="menu-item" onclick="carregarPagina('ferias.html', this)">🏖️ Férias e Faltas</a>
-        <a class="menu-item active" onclick="carregarPagina('dashboard-inicio.html', this)">📊 Dashboard</a>
     </aside>
 
-    <main class="main-content">
-        <header class="header-top">
-            <div>
-                <h1 id="titulo-pagina">GESTÃO DE OPERAÇÕES</h1>
-                <div class="header-subtitle">Sistema Integrado de Recursos Humanos</div>
-            </div>
-            <div class="location-badge">📍 ARAÇATUBA / SP</div>
-        </header>
-
+    <main class="content-area">
         <iframe id="conteudo-frame" src="dashboard-inicio.html"></iframe>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        function carregarPagina(url, elemento) {
+            document.getElementById('conteudo-frame').src = url;
+            let itensMenu = document.querySelectorAll('.menu-item');
+            itensMenu.forEach(item => item.classList.remove('active'));
+            elemento.classList.add('active');
+        }
+    </script>
 </body>
 </html>
