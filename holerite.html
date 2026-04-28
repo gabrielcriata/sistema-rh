@@ -151,19 +151,32 @@ tr:hover td { background-color: rgba(255,255,255,0.02); }
     document.addEventListener("DOMContentLoaded", carregarDropdown);
 
     function carregarDropdown() {
-        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+       const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
         const select = document.getElementById('selectFuncionario');
+        
+        // Garante que o select comece limpo, só com a opção padrão
+        select.innerHTML = '<option value="">Selecione um funcionário...</option>';
         
         funcionarios.forEach(f => {
             let option = document.createElement('option');
             option.value = f.id;
-            option.textContent = `${f.nome} - R$ ${f.salario.toFixed(2).replace('.', ',')}`;
+            
+            // Sistema de segurança: verifica se o salário é um número válido antes de formatar
+            let salarioFormatado = "0,00";
+            let valorSalario = parseFloat(f.salario);
+            
+            if (!isNaN(valorSalario)) {
+                salarioFormatado = valorSalario.toFixed(2).replace('.', ',');
+            }
+            
+            option.textContent = `${f.nome} - R$ ${salarioFormatado}`;
             select.appendChild(option);
         });
 
         // Preenche o mês atual no cabeçalho
         const dataAtual = new Date();
         document.getElementById('hMesAno').textContent = `${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}`;
+    }
     }
 
     function calcularINSS(salarioBruto, config) {
