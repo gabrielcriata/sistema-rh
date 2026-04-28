@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH - Gerador de Holerite</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #2c3e50; padding-bottom: 10px; color: #2c3e50; }
+        
+        .controles { display: flex; gap: 10px; margin-bottom: 20px; }
+        select, button { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        select { flex-grow: 1; }
+        button { background-color: #3498db; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #2980b9; }
+
+        /* Estilo do Holerite Visual */
+        .holerite-box { display: none; border: 2px solid #333; padding: 20px; margin-top: 20px; background: #fff; }
+        .cabecalho-holerite { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+        .dados-funcionario { margin-bottom: 20px; font-size: 14px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: right; }
+        th { background-color: #f0f0f0; text-align: center; }
+        td:nth-child(1) { text-align: left; } /* Coluna Descrição alinhada à esquerda */
+
+        .totais { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 10px; border-top: 2px solid #333; padding-top: 10px; }
+        .valor-liquido { color: #27ae60; font-size: 18px; }
+        
+        @media print {
+            body { background: white; padding: 0; }
+            .controles, h2 { display: none; }
+            .container { box-shadow: none; padding: 0; }
+            .holerite-box { display: block; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Geração de Holerite</h2>
+    
+    <div class="controles">
+        <select id="selectFuncionario">
+            <option value="">Selecione um funcionário...</option>
+        </select>
+        <button onclick="gerarHolerite()">Calcular e Gerar</button>
+        <button onclick="window.print()" style="background-color: #7f8c8d;">Imprimir PDF</button>
+    </div>
+
+    <div id="holeritePronto" class="holerite-box">
+        <div class="cabecalho-holerite">
+            <h3>RECIBO DE PAGAMENTO DE SALÁRIO</h3>
+            <p>Mês de Referência: <span id="hMesAno"></span></p>
+        </div>
+        
+        <div class="dados-funcionario">
+            <strong>Nome:</strong> <span id="hNome"></span> <br>
+            <strong>Cargo:</strong> <span id="hCargo"></span> | <strong>CPF:</strong> <span id="hCpf"></span><br>
+            <strong>Dependentes IRRF:</strong> <span id="hDep"></span>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Referência / Alíquota</th>
+                    <th>Proventos (R$)</th>
+                    <th>Descontos (R$)</th>
+                </tr>
+            </thead>
+            <tbody id="hItens">
+                </tbody>
+        </table>
+
+        <div class="totais">
+            <div>Total de Vencimentos: R$ <span id="hTotalProv">0,00</span></div>
+            <div>Total de Descontos: R$ <span id="hTotalDesc">0,00</span></div>
+        </div>
+        <div class="totais">
+            <div></div>
+            <div class="valor-liquido">Líquido a Receber: R$ <span id="hLiquido">0,00</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", carregarDropdown);
+
+    function carregarDropdown() {
+        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+        const select = document.getElementById('selectFuncionario');
+        
+        funcionarios.forEach(f => {
+            let option = document.createElement('option');
+            option.value = f.id;
+            option.textContent = `${f.nome} - R$ ${f.salario.toFixed(2).replace('.', ',')}`;
+            select.appendChild(option);
+        });
+
+        // Preenche o mês atual no cabeçalho
+        const dataAtual = new Date();
+        document.getElementById('hMesAno').textContent = `${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}`;
+    }
+
+    function calcularINSS(salarioBruto, config) {
+        // Cálculo simplificado de teto para demonstração. 
+        // Num sistema real completo, você faria o cálculo progressivo faixa a faixa.
+        let desconto = 0;
+        let aliquota = 0;
+
+        if (salarioBruto <= config.inss.teto1) { aliquota = 7.5; }
+        else if (salarioBruto <= config.inss.teto2) { aliquota = 9.0; }
+        else if (salarioBruto <= config.inss.teto3) { aliquota = 12.0; }
+        else { aliquota = 14.0; }
+
+        // Se passar do teto máximo, trava o desconto no limite
+        if (salarioBruto > config.inss.teto4) {
+            desconto = config.inss.teto4 * (14 / 100); // Simplificação de teto
+            aliquota = "Teto Máximo";
+        } else {
+            desconto = salarioBruto * (aliquota / 100);
+            aliquota = aliquota + "%";
+        }
+        return { valor: desconto, ref: aliquota };
+    }
+
+    function calcularIRRF(salarioBruto, descontoINSS, dependentes, config) {
+        const baseCalculo = salarioBruto - descontoINSS - (dependentes * config.geral.deducaoDependente);
+        let desconto = 0;
+        let aliquota = 0;
+        let deducao = 0;
+
+        if (baseCalculo <= config.irrf.teto1) { aliquota = 0; deducao = 0; }
+        else if (baseCalculo <= config.irrf.teto2) { aliquota = 7.5; deducao = config.irrf.ded2; }
+        else if (baseCalculo <= config.irrf.teto3) { aliquota = 15.0; deducao = config.irrf.ded3; }
+        else if (baseCalculo <= config.irrf.teto4) { aliquota = 22.5; deducao = config.irrf.ded4; }
+        else { aliquota = 27.5; deducao = config.irrf.ded5; }
+
+        if (aliquota > 0) {
+            desconto = (baseCalculo * (aliquota / 100)) - deducao;
+        }
+
+        // IRRF não pode ser negativo
+        if (desconto < 0) desconto = 0;
+
+        return { valor: desconto, ref: aliquota + "%" };
+    }
+
+    function gerarHolerite() {
+        const idSelecionado = document.getElementById('selectFuncionario').value;
+        if (!idSelecionado) { alert("Selecione um funcionário primeiro."); return; }
+
+        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+        const configFiscais = JSON.parse(localStorage.getItem('rhTabelasFiscais'));
+
+        if (!configFiscais) {
+            alert("Aviso: Você precisa salvar as Tabelas Fiscais primeiro no módulo de Configurações!");
+            return;
+        }
+
+        const func = funcionarios.find(f => f.id == idSelecionado);
+        const salario = func.salario;
+
+        // Executa os cálculos
+        const inss = calcularINSS(salario, configFiscais);
+        const irrf = calcularIRRF(salario, inss.valor, func.dependentes, configFiscais);
+
+        const totalProventos = salario;
+        const totalDescontos = inss.valor + irrf.valor;
+        const liquido = totalProventos - totalDescontos;
+
+        // Preenche a tela
+        document.getElementById('hNome').textContent = func.nome;
+        document.getElementById('hCargo').textContent = func.cargo;
+        document.getElementById('hCpf').textContent = func.cpf || "Não informado";
+        document.getElementById('hDep').textContent = func.dependentes;
+
+        const tbody = document.getElementById('hItens');
+        tbody.innerHTML = `
+            <tr>
+                <td>Salário Base</td>
+                <td>30 dias</td>
+                <td>${salario.toFixed(2).replace('.', ',')}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>INSS</td>
+                <td>${inss.ref}</td>
+                <td></td>
+                <td>${inss.valor.toFixed(2).replace('.', ',')}</td>
+            </tr>
+            <tr>
+                <td>IRRF</td>
+                <td>${irrf.ref}</td>
+                <td></td>
+                <td>${irrf.valor.toFixed(2).replace('.', ',')}</td>
+            </tr>
+        `;
+
+        document.getElementById('hTotalProv').textContent = totalProventos.toFixed(2).replace('.', ',');
+        document.getElementById('hTotalDesc').textContent = totalDescontos.toFixed(2).replace('.', ',');
+        document.getElementById('hLiquido').textContent = liquido.toFixed(2).replace('.', ',');
+
+        // Mostra o holerite
+        document.getElementById('holeritePronto').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
