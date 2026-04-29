@@ -25,9 +25,9 @@
         input, select { width: 100%; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; font-family: 'Inter', sans-serif; transition: 0.3s; }
         input:focus, select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
         
-        button, .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 8px; font-family: 'Inter', sans-serif;}
-        button:hover, .btn-salvar:hover { background-color: #7c3aed; transform: translateY(-1px); }
-        .btn-excluir { background-color: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 6px 12px; font-size: 12px; width: auto; margin-top: 0;}
+        .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 8px; font-family: 'Inter', sans-serif;}
+        .btn-salvar:hover { background-color: #7c3aed; transform: translateY(-1px); }
+        .btn-excluir { background-color: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 6px 12px; font-size: 12px; width: auto; cursor: pointer; border-radius: 6px; }
         .btn-excluir:hover { background: rgba(239, 68, 68, 0.1); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 16px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
@@ -37,12 +37,15 @@
         tr:hover td { background-color: rgba(255,255,255,0.02); }
         
         .badge { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .msg-sucesso { display: none; background-color: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: 8px; text-align: center; margin-bottom: 24px; font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Registro de Documentos e EPIs</h2>
+    
+    <div id="msgSucesso" class="msg-sucesso"></div>
     
     <div class="form-grid">
         <div class="form-group full-width">
@@ -78,6 +81,7 @@
     </table>
 </div>
 
+<script src="script.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         carregarDropdown();
@@ -88,26 +92,52 @@
     function carregarDropdown() {
         const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
         const select = document.getElementById('selectFuncionario');
+        // Limpa o select antes de carregar (exceto a primeira opção)
+        select.innerHTML = '<option value="">Selecione um funcionário...</option>';
+        
         funcionarios.forEach(f => {
             let option = document.createElement('option');
-            option.value = f.id; option.textContent = f.nome;
+            option.value = f.id; 
+            option.textContent = f.nome;
             select.appendChild(option);
         });
     }
 
-    function registrarDocumento() {
-        const funcId = document.getElementById('selectFuncionario').value;
-        const funcNome = document.getElementById('selectFuncionario').options[document.getElementById('selectFuncionario').selectedIndex].text;
-        const nomeDoc = document.getElementById('nomeDoc').value;
+    async function registrarDocumento() {
+        const select = document.getElementById('selectFuncionario');
+        const funcId = select.value;
+        const funcNome = select.options[select.selectedIndex].text;
+        const nomeDoc = document.getElementById('nomeDoc').value.trim();
         const dataDoc = document.getElementById('dataDoc').value;
 
-        if (!funcId || !nomeDoc || !dataDoc) { alert("Preencha todos os campos!"); return; }
+        if (!funcId || !nomeDoc || !dataDoc) { 
+            alert("Por favor, preencha todos os campos!"); 
+            return; 
+        }
 
-        const log = { id: Date.now(), funcId, funcNome, nomeDoc, dataDoc, dataRegistro: new Date().toISOString() };
+        const log = { 
+            id: Date.now(), 
+            funcId, 
+            funcNome, 
+            nomeDoc, 
+            dataDoc, 
+            dataRegistro: new Date().toISOString() 
+        };
+
         let documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
         documentos.unshift(log);
         localStorage.setItem('rhDocumentos', JSON.stringify(documentos));
         
+        // SINCRONIZAÇÃO COM O ESPELHO DE SEGURANÇA
+        if (window.MirrorDB) {
+            await MirrorDB.salvarAutomatico();
+        }
+        
+        // Notificação usando o padrão do script.js
+        if (window.notificar) {
+            notificar("Documento registrado com sucesso!");
+        }
+
         document.getElementById('nomeDoc').value = '';
         renderizarLogs();
     }
@@ -116,6 +146,11 @@
         const tbody = document.getElementById('listaDocumentos');
         tbody.innerHTML = '';
         const documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
+
+        if (documentos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Nenhum documento registrado.</td></tr>';
+            return;
+        }
 
         documentos.forEach(doc => {
             const dataFormatada = doc.dataDoc.split('-').reverse().join('/');
@@ -131,11 +166,21 @@
         });
     }
 
-    function excluirLog(id) {
-        if (confirm("Tem certeza que deseja apagar este registro?")) {
+    async function excluirLog(id) {
+        if (confirm("Deseja remover este registro de entrega permanentemente?")) {
             let documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
             documentos = documentos.filter(doc => doc.id !== id);
             localStorage.setItem('rhDocumentos', JSON.stringify(documentos));
+            
+            // SINCRONIZAÇÃO APÓS EXCLUSÃO
+            if (window.MirrorDB) {
+                await MirrorDB.salvarAutomatico();
+            }
+
+            if (window.notificar) {
+                notificar("Registro removido.");
+            }
+
             renderizarLogs();
         }
     }
