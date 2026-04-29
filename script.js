@@ -1,49 +1,40 @@
 // =========================================================
-// NAVEGAÇÃO E INTERFACE
+// 1. NAVEGAÇÃO E INTERFACE
 // =========================================================
-
 function carregarPagina(url, elementoClicado) {
     const frame = document.getElementById('conteudo-frame');
     const titulo = document.getElementById('titulo-pagina');
-
     if (!frame || !elementoClicado) return;
 
-    // 1. Muda a página dentro do iframe
     frame.src = url;
 
-    // 2. Gerencia o estado 'active' no menu
-    document.querySelectorAll('.menu-item').forEach(menu => {
-        menu.classList.remove('active');
-    });
+    // Gerencia o estado ativo do menu
+    document.querySelectorAll('.menu-item').forEach(menu => menu.classList.remove('active'));
     elementoClicado.classList.add('active');
 
-    // 3. Atualiza o título (remove emojis e limpa espaços)
+    // Limpa o título (remove emojis e espaços)
     let textoBotao = elementoClicado.innerText.replace(/[^\w\sÀ-ÿ]/gi, '').trim();
-    if (titulo) {
-        titulo.innerText = textoBotao.toUpperCase();
-    }
-    
-    console.log(`📂 Navegando para: ${textoBotao}`);
+    if (titulo) titulo.innerText = textoBotao.toUpperCase();
 }
 
-// Utilitário para notificações na tela
+// Notificações flutuantes padrão
 function notificar(texto, tipo = 'sucesso') {
     const msg = document.getElementById('msgSucesso');
     if (!msg) return;
     msg.innerText = texto;
     msg.style.display = 'block';
+    msg.style.backgroundColor = tipo === 'sucesso' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+    msg.style.color = tipo === 'sucesso' ? '#10b981' : '#ef4444';
     setTimeout(() => msg.style.display = 'none', 3000);
 }
 
 // =========================================================
-// MOTOR DO ESPELHO DE SEGURANÇA (IndexedDB)
+// 2. ESPELHO DE SEGURANÇA (MirrorDB)
 // =========================================================
-
 const MirrorDB = {
     name: "HCM_Mirror_DB",
     version: 1,
     store: "backups",
-    // Chaves importantes que o sistema utiliza
     keys: ['rhFuncionarios', 'rhTabelasFiscais', 'rhDocumentos', 'rhFaltas', 'rhEventos', 'rhEventosRH'],
     
     abrir() {
@@ -61,15 +52,10 @@ const MirrorDB = {
             const d = localStorage.getItem(k);
             if(d) backup[k] = JSON.parse(d);
         });
-        
-        try {
-            const db = await this.abrir();
-            const tx = db.transaction(this.store, "readwrite");
-            tx.objectStore(this.store).put(backup, "ultimo_backup_automatico");
-            console.log("🛡️ Espelho de Segurança sincronizado.");
-        } catch (err) {
-            console.error("Erro ao salvar espelho:", err);
-        }
+        const db = await this.abrir();
+        const tx = db.transaction(this.store, "readwrite");
+        tx.objectStore(this.store).put(backup, "ultimo_backup_automatico");
+        console.log("🛡️ Espelho sincronizado.");
     },
 
     async restaurar() {
@@ -88,20 +74,17 @@ const MirrorDB = {
 };
 
 // =========================================================
-// CALCULADORA FISCAL CENTRALIZADA
+// 3. CALCULADORA FISCAL (REGRAS 2026)
 // =========================================================
-
 const CalculadoraRH = {
     calcularINSS(salarioBruto, config) {
         if (!config || !config.inss) return { valor: 0, ref: "Erro" };
         let s = Math.min(salarioBruto, config.inss.teto4);
         let desconto = 0;
-        
         if (s > 0) desconto += Math.min(s, config.inss.teto1) * 0.075;
         if (s > config.inss.teto1) desconto += (Math.min(s, config.inss.teto2) - config.inss.teto1) * 0.09;
         if (s > config.inss.teto2) desconto += (Math.min(s, config.inss.teto3) - config.inss.teto2) * 0.12;
         if (s > config.inss.teto3) desconto += (s - config.inss.teto3) * 0.14;
-
         return { valor: desconto, ref: salarioBruto > config.inss.teto4 ? "Teto" : "Prog." };
     },
 
@@ -109,9 +92,7 @@ const CalculadoraRH = {
         if (!config || !config.irrf) return { valor: 0, ref: "Erro" };
         const deducaoDep = config.geral ? config.geral.deducaoDependente : 189.59;
         const base = salarioBruto - descontoINSS - (dependentes * deducaoDep);
-        
-        // Regra Especial Araçatuba/2026 (conforme seu projeto)
-        if (salarioBruto <= 5000) return { valor: 0, ref: "Isento (2026)" };
+        if (salarioBruto <= 5000) return { valor: 0, ref: "Isento" };
         
         let irNormal = 0;
         if (base > config.irrf.teto4) irNormal = (base * 0.275) - config.irrf.ded5;
