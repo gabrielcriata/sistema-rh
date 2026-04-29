@@ -26,16 +26,15 @@
         input, select { width: 100%; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; font-family: 'Inter', sans-serif; transition: 0.3s; }
         input:focus, select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
         
-        button, .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 8px; font-family: 'Inter', sans-serif;}
-        button:hover, .btn-salvar:hover { background-color: #7c3aed; transform: translateY(-1px); }
-        .btn-excluir { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 8px; font-size: 11px; margin-left: 10px; border-radius: 4px; transition: 0.2s;}
+        .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 8px; font-family: 'Inter', sans-serif;}
+        .btn-salvar:hover { background-color: #7c3aed; transform: translateY(-1px); }
+        .btn-excluir { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 8px; font-size: 11px; margin-left: 10px; border-radius: 4px; transition: 0.2s; cursor: pointer;}
         .btn-excluir:hover { border-color: var(--accent-red); color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 16px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
         th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; }
         tr:last-child td { border-bottom: none; }
-        tr:hover td { background-color: rgba(255,255,255,0.02); }
         
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid; }
         .badge.green { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.2); }
@@ -44,12 +43,15 @@
         
         .lista-faltas { font-size: 12px; color: var(--text-muted); margin-top: 8px; display: flex; flex-direction: column; gap: 4px;}
         .falta-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 4px 8px; border-radius: 4px;}
+        .msg-sucesso { display: none; padding: 16px; border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Controle de Férias e Faltas</h2>
+    
+    <div id="msgSucesso" class="msg-sucesso"></div>
     
     <div class="form-grid">
         <div class="form-group full-width">
@@ -64,7 +66,7 @@
         </div>
         <div class="form-group">
             <label>Motivo / Observação:</label>
-            <input type="text" id="motivoFalta" placeholder="Ex: Não compareceu, sem atestado">
+            <input type="text" id="motivoFalta" placeholder="Ex: Sem justificativa legal">
         </div>
     </div>
 
@@ -84,6 +86,7 @@
     </table>
 </div>
 
+<script src="script.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         carregarDropdown();
@@ -93,35 +96,48 @@
     function carregarDropdown() {
         const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
         const select = document.getElementById('selectFuncionario');
+        select.innerHTML = '<option value="">Selecione um funcionário...</option>';
+        
         funcionarios.forEach(f => {
             let option = document.createElement('option');
-            option.value = f.id; option.textContent = f.nome;
+            option.value = f.id; 
+            option.textContent = f.nome;
             select.appendChild(option);
         });
     }
 
-    function registrarFalta() {
+    async function registrarFalta() {
         const funcId = document.getElementById('selectFuncionario').value;
         const dataFalta = document.getElementById('dataFalta').value;
         const motivo = document.getElementById('motivoFalta').value || "Não justificada";
 
-        if (!funcId || !dataFalta) { alert("Selecione o funcionário e a data da falta!"); return; }
+        if (!funcId || !dataFalta) { 
+            alert("Selecione o funcionário e a data da falta!"); 
+            return; 
+        }
 
         const falta = { id: Date.now(), funcId, dataFalta, motivo };
         let faltas = JSON.parse(localStorage.getItem('rhFaltas')) || [];
         faltas.push(falta);
         localStorage.setItem('rhFaltas', JSON.stringify(faltas));
         
+        if (window.MirrorDB) await MirrorDB.salvarAutomatico();
+        if (window.notificar) notificar("Falta registrada com sucesso!");
+
         document.getElementById('dataFalta').value = '';
         document.getElementById('motivoFalta').value = '';
         renderizarPainel();
     }
 
-    function excluirFalta(id) {
-        if(confirm("Remover esta falta?")) {
+    async function excluirFalta(id) {
+        if(confirm("Remover esta falta do registro?")) {
             let faltas = JSON.parse(localStorage.getItem('rhFaltas')) || [];
             faltas = faltas.filter(f => f.id !== id);
             localStorage.setItem('rhFaltas', JSON.stringify(faltas));
+            
+            if (window.MirrorDB) await MirrorDB.salvarAutomatico();
+            if (window.notificar) notificar("Falta removida.");
+            
             renderizarPainel();
         }
     }
@@ -134,6 +150,11 @@
         const todasFaltas = JSON.parse(localStorage.getItem('rhFaltas')) || [];
         const hoje = new Date(); 
 
+        if (funcionarios.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Nenhum funcionário cadastrado.</td></tr>';
+            return;
+        }
+
         funcionarios.forEach(f => {
             const faltasFuncionario = todasFaltas.filter(falta => falta.funcId == f.id);
             const numFaltas = faltasFuncionario.length;
@@ -144,40 +165,47 @@
                 mesesTrabalhados = Math.floor(Math.abs(hoje - dataAdmissao) / (1000 * 60 * 60 * 24 * 30.44));
             }
 
-            let diasBase = mesesTrabalhados >= 12 ? 30 : Math.floor(mesesTrabalhados * 2.5);
-            let diasFerias = diasBase;
-            
-            if (mesesTrabalhados >= 12) {
-                if (numFaltas >= 6 && numFaltas <= 14) diasFerias = 24;
-                else if (numFaltas >= 15 && numFaltas <= 23) diasFerias = 18;
-                else if (numFaltas >= 24 && numFaltas <= 32) diasFerias = 12;
-                else if (numFaltas > 32) diasFerias = 0;
-            } else {
-                if (numFaltas > 5) diasFerias = Math.max(0, diasFerias - (numFaltas - 5)); 
+            // Lógica CLT para redução de férias por faltas (Art. 130 CLT)
+            let diasFerias = 30;
+            if (numFaltas > 32) diasFerias = 0;
+            else if (numFaltas >= 24) diasFerias = 12;
+            else if (numFaltas >= 15) diasFerias = 18;
+            else if (numFaltas >= 6) diasFerias = 24;
+
+            // Se for proporcional (< 12 meses), calculamos sobre o direito base reduzido pelas faltas
+            if (mesesTrabalhados < 12) {
+                diasFerias = Math.floor((diasFerias / 12) * mesesTrabalhados);
             }
 
             let badgeClass = "green";
-            if (mesesTrabalhados >= 22) badgeClass = "red"; 
-            else if (mesesTrabalhados >= 12) badgeClass = "orange"; 
+            let statusText = "EM AQUISIÇÃO";
+            
+            if (mesesTrabalhados >= 22) {
+                badgeClass = "red"; statusText = "VENCENDO / MULTA!";
+            } else if (mesesTrabalhados >= 12) {
+                badgeClass = "orange"; statusText = "DIREITO ADQUIRIDO";
+            }
 
             let listaFaltasHTML = '';
             faltasFuncionario.forEach(falta => {
                 const dataF = falta.dataFalta.split('-').reverse().join('/');
-                listaFaltasHTML += `<div class="falta-item"><span>${dataF} (${falta.motivo})</span> <button class="btn-excluir" onclick="excluirFalta(${falta.id})">x</button></div>`;
+                listaFaltasHTML += `
+                    <div class="falta-item">
+                        <span>${dataF} - ${falta.motivo}</span> 
+                        <button class="btn-excluir" onclick="excluirFalta(${falta.id})">×</button>
+                    </div>`;
             });
 
             tbody.innerHTML += `
                 <tr>
-                    <td><strong>${f.nome}</strong></td>
+                    <td><strong>${f.nome}</strong><br><small style="color:var(--text-muted)">${f.cargo}</small></td>
                     <td>
-                        <div style="margin-bottom: 6px;">${mesesTrabalhados} meses na empresa</div>
-                        <span class="badge ${badgeClass}">
-                            ${mesesTrabalhados >= 22 ? 'VENCENDO / MULTA!' : (mesesTrabalhados >= 12 ? 'DIREITO ADQUIRIDO' : 'EM AQUISIÇÃO')}
-                        </span>
+                        <div style="margin-bottom: 6px;">${mesesTrabalhados} meses de casa</div>
+                        <span class="badge ${badgeClass}">${statusText}</span>
                     </td>
                     <td>
-                        <span style="color: ${numFaltas > 5 ? 'var(--accent-red)' : 'var(--text-main)'}; font-weight: 600;">
-                            ${numFaltas} falta(s) registrada(s)
+                        <span style="color: ${numFaltas > 5 ? 'var(--accent-red)' : 'var(--text-muted)'}; font-weight: 600;">
+                            ${numFaltas} falta(s) injustificada(s)
                         </span>
                         <div class="lista-faltas">${listaFaltasHTML}</div>
                     </td>
