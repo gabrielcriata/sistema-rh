@@ -176,257 +176,189 @@
     </div>
 
     <script>
-        Chart.defaults.color = '#a1a1aa';
-        Chart.defaults.font.family = "'Inter', sans-serif";
+        <script src="script.js"></script> <script>
+    Chart.defaults.color = '#a1a1aa';
+    Chart.defaults.font.family = "'Inter', sans-serif";
 
-        let dataAtualCal = new Date();
-        let dataSelecionada = new Date(); 
-        const mesesNomes = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
-        const mesesAbrev = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+    let dataAtualCal = new Date();
+    let dataSelecionada = new Date(); 
+    let graficoFeriasInstancia = null;
+    let graficoCargosInstancia = null;
 
-        // Banco de Dados de Feriados 2026 (Nacionais, SP e Araçatuba)
-        const feriados2026 = [
-            { data: '2026-01-01', nome: 'Feriado: Confraternização Universal' },
-            { data: '2026-02-16', nome: 'Ponto Facultativo: Carnaval' },
-            { data: '2026-02-17', nome: 'Ponto Facultativo: Carnaval' },
-            { data: '2026-02-18', nome: 'Ponto Facultativo: Quarta-feira de Cinzas' },
-            { data: '2026-04-03', nome: 'Feriado: Paixão de Cristo' },
-            { data: '2026-04-21', nome: 'Feriado: Tiradentes' },
-            { data: '2026-05-01', nome: 'Feriado: Dia do Trabalhador' },
-            { data: '2026-06-04', nome: 'Ponto Facultativo: Corpus Christi' },
-            { data: '2026-07-09', nome: 'Feriado Estadual: Revolução Constitucionalista (SP)' },
-            { data: '2026-09-07', nome: 'Feriado: Independência do Brasil' },
-            { data: '2026-10-12', nome: 'Feriado: Nossa Sra. Aparecida' },
-            { data: '2026-10-28', nome: 'Ponto Facultativo: Dia do Servidor Público' },
-            { data: '2026-11-02', nome: 'Feriado: Finados' },
-            { data: '2026-11-15', nome: 'Feriado: Proclamação da República' },
-            { data: '2026-11-20', nome: 'Feriado: Consciência Negra' },
-            { data: '2026-12-02', nome: 'Feriado Municipal: Aniversário de Araçatuba' },
-            { data: '2026-12-25', nome: 'Feriado: Natal' }
-        ];
+    const mesesNomes = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+    const mesesAbrev = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
 
-        function initCalendario() { renderizarCalendario(); renderizarEventos(); }
+    // Feriados 2026 (Nacionais e Araçatuba)
+    const feriados2026 = [
+        { data: '2026-01-01', nome: 'Confraternização Universal' },
+        { data: '2026-02-17', nome: 'Carnaval' },
+        { data: '2026-04-03', nome: 'Paixão de Cristo' },
+        { data: '2026-04-21', nome: 'Tiradentes' },
+        { data: '2026-05-01', nome: 'Dia do Trabalhador' },
+        { data: '2026-06-04', nome: 'Corpus Christi' },
+        { data: '2026-07-09', nome: 'Revolução Constitucionalista (SP)' },
+        { data: '2026-09-07', nome: 'Independência do Brasil' },
+        { data: '2026-10-12', nome: 'Nossa Sra. Aparecida' },
+        { data: '2026-11-02', nome: 'Finados' },
+        { data: '2026-11-15', nome: 'Proclamação da República' },
+        { data: '2026-11-20', nome: 'Consciência Negra' },
+        { data: '2026-12-02', nome: 'Aniversário de Araçatuba' }, // Feriado Municipal
+        { data: '2026-12-25', nome: 'Natal' }
+    ];
 
-        function formataDataISO(dateObj) {
-            return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
-        }
+    document.addEventListener("DOMContentLoaded", () => {
+        atualizarDashboard();
+        renderizarCalendario();
+        renderizarEventos();
+    });
 
-        function mudarMes(direcao) { dataAtualCal.setMonth(dataAtualCal.getMonth() + direcao); renderizarCalendario(); }
+    // ================= LÓGICA DO CALENDÁRIO =================
 
-        function calendarioHoje() {
-            dataAtualCal = new Date(); dataSelecionada = new Date();
-            renderizarCalendario(); renderizarEventos();
-        }
+    function formataDataISO(dateObj) {
+        return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+    }
 
-        function selecionarDia(ano, mes, dia) {
-            dataSelecionada = new Date(ano, mes, dia);
-            renderizarCalendario(); renderizarEventos();
-        }
+    function renderizarCalendario() {
+        const ano = dataAtualCal.getFullYear();
+        const mes = dataAtualCal.getMonth();
+        document.getElementById('calMonthDisplay').innerText = mesesNomes[mes];
+        document.getElementById('calYearDisplay').innerText = ano;
 
-        function renderizarCalendario() {
-            const ano = dataAtualCal.getFullYear();
-            const mes = dataAtualCal.getMonth();
-            document.getElementById('calMonthDisplay').innerText = mesesNomes[mes];
-            document.getElementById('calYearDisplay').innerText = ano;
+        const primeiroDiaMes = new Date(ano, mes, 1).getDay(); 
+        const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+        const calGrid = document.getElementById('calGrid');
+        calGrid.innerHTML = '';
 
-            const primeiroDiaMes = new Date(ano, mes, 1).getDay(); 
-            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-            const diasMesAnterior = new Date(ano, mes, 0).getDate();
-            const calGrid = document.getElementById('calGrid');
-            calGrid.innerHTML = '';
+        const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
+        let htmlDias = '';
+        
+        // Dias vazios do mês anterior
+        for (let i = primeiroDiaMes; i > 0; i--) { htmlDias += `<div class="cal-day muted"></div>`; }
 
-            const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
-            let htmlDias = '';
+        const hojeReal = new Date();
+        for (let i = 1; i <= diasNoMes; i++) {
+            let dataIteracao = new Date(ano, mes, i);
+            let isoFormat = formataDataISO(dataIteracao);
             
-            for (let i = primeiroDiaMes; i > 0; i--) { htmlDias += `<div class="cal-day muted">${diasMesAnterior - i + 1}</div>`; }
+            let ehHoje = (i === hojeReal.getDate() && mes === hojeReal.getMonth() && ano === hojeReal.getFullYear());
+            let ehSelecionado = (i === dataSelecionada.getDate() && mes === dataSelecionada.getMonth() && ano === dataSelecionada.getFullYear());
+            let temEvento = todosEventos.some(ev => ev.data === isoFormat);
+            let temFeriado = feriados2026.some(f => f.data === isoFormat);
 
-            const hojeReal = new Date();
-            for (let i = 1; i <= diasNoMes; i++) {
-                let dataIteracao = new Date(ano, mes, i);
-                let isoFormat = formataDataISO(dataIteracao);
-                
-                let ehHoje = (i === hojeReal.getDate() && mes === hojeReal.getMonth() && ano === hojeReal.getFullYear());
-                let ehSelecionado = (i === dataSelecionada.getDate() && mes === dataSelecionada.getMonth() && ano === dataSelecionada.getFullYear());
-                
-                let eventosNoDia = todosEventos.filter(ev => ev.data === isoFormat);
-                let temEvento = eventosNoDia.length > 0;
-                
-                let feriadosNoDia = feriados2026.filter(f => f.data === isoFormat);
-                let temFeriado = feriadosNoDia.length > 0;
+            let classes = 'cal-day';
+            if (ehSelecionado) classes += ' active';
+            if (temFeriado) classes += ' has-holiday';
+            if (temEvento) classes += ' has-event';
 
-                let classes = 'cal-day';
-                if (ehSelecionado) classes += ' active';
-                else {
-                    if (temFeriado) classes += ' has-holiday';
-                    if (temEvento) classes += ' has-event';
+            htmlDias += `<div class="${classes}" onclick="selecionarDia(${ano}, ${mes}, ${i})">${i}</div>`;
+        }
+
+        calGrid.innerHTML = htmlDias;
+    }
+
+    function selecionarDia(ano, mes, dia) {
+        dataSelecionada = new Date(ano, mes, dia);
+        renderizarCalendario();
+        renderizarEventos();
+    }
+
+    async function adicionarEvento() {
+        const input = document.getElementById('novoEventoInput');
+        const texto = input.value.trim();
+        if (!texto) return;
+
+        const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
+        todosEventos.push({ id: Date.now(), data: formataDataISO(dataSelecionada), texto });
+        localStorage.setItem('rhEventos', JSON.stringify(todosEventos));
+
+        // SINCRONIZA COM O ESPELHO
+        if (window.MirrorDB) await MirrorDB.salvarAutomatico();
+
+        input.value = '';
+        renderizarEventos();
+        renderizarCalendario();
+    }
+
+    // ================= LÓGICA DE DADOS (DASHBOARD) =================
+
+    function atualizarDashboard() {
+        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+        const documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
+        const hoje = new Date();
+
+        document.getElementById('dashTotalFunc').innerText = funcionarios.length;
+        document.getElementById('dashTotalDocs').innerText = documentos.length;
+        
+        const totalFolha = funcionarios.reduce((acc, f) => acc + (parseFloat(f.salario) || 0), 0);
+        document.getElementById('dashTotalFolha').innerText = totalFolha.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        let alertasCriticos = 0;
+        let statusFerias = { aquisitivo: 0, adquirido: 0, vencendo: 0 };
+        let custoPorCargo = {};
+        let muralHTML = '';
+
+        funcionarios.forEach(f => {
+            let cargo = f.cargo || "Outros";
+            custoPorCargo[cargo] = (custoPorCargo[cargo] || 0) + (parseFloat(f.salario) || 0);
+
+            if (f.admissao) {
+                const admissao = new Date(f.admissao);
+                const meses = Math.floor((hoje - admissao) / (1000 * 60 * 60 * 24 * 30.44));
+                
+                if (meses >= 22) {
+                    alertasCriticos++; statusFerias.vencendo++;
+                    muralHTML += `<div class="activity-item" style="border-left-color: var(--accent-red)">
+                        <small>CRÍTICO</small><strong>${f.nome}</strong>: ${meses} meses sem férias.</div>`;
+                } else if (meses >= 12) {
+                    statusFerias.adquirido++;
+                } else {
+                    statusFerias.aquisitivo++;
                 }
-
-                let dotHtml = '';
-                if (temEvento || temFeriado) {
-                    dotHtml = `<div class="dot-container">`;
-                    if (temFeriado) dotHtml += `<div class="cal-dot holiday"></div>`;
-                    for(let b=0; b < Math.min(eventosNoDia.length, 2); b++){
-                        dotHtml += `<div class="cal-dot ${ehHoje ? 'green' : ''}"></div>`;
-                    }
-                    dotHtml += `</div>`;
-                }
-
-                htmlDias += `<div class="${classes}" onclick="selecionarDia(${ano}, ${mes}, ${i})">${i}${dotHtml}</div>`;
             }
-
-            const slotsRestantes = 42 - (primeiroDiaMes + diasNoMes);
-            for (let i = 1; i <= slotsRestantes; i++) { htmlDias += `<div class="cal-day muted">${i}</div>`; }
-
-            calGrid.innerHTML = htmlDias;
-        }
-
-        function renderizarEventos() {
-            document.getElementById('selectedDateDisplay').innerText = `${dataSelecionada.getDate()} DE ${mesesAbrev[dataSelecionada.getMonth()]}.`;
-            const list = document.getElementById('eventsList');
-            const isoSelecionada = formataDataISO(dataSelecionada);
-            
-            const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
-            const eventosDoDia = todosEventos.filter(ev => ev.data === isoSelecionada);
-            const feriadosDoDia = feriados2026.filter(f => f.data === isoSelecionada);
-
-            if (eventosDoDia.length === 0 && feriadosDoDia.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Sem eventos agendados
-                    </div>
-                `;
-            } else {
-                let html = '';
-                
-                feriadosDoDia.forEach(f => {
-                    html += `
-                        <div class="event-item holiday">
-                            <span class="event-item-text" style="color: var(--accent-red); font-weight: 600;">${f.nome}</span>
-                        </div>
-                    `;
-                });
-
-                eventosDoDia.forEach(ev => {
-                    html += `
-                        <div class="event-item">
-                            <span class="event-item-text">${ev.texto}</span>
-                            <button class="btn-delete-event" onclick="deletarEvento(${ev.id})" title="Remover">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            </button>
-                        </div>
-                    `;
-                });
-                list.innerHTML = html;
-            }
-        }
-
-        function adicionarEvento() {
-            const input = document.getElementById('novoEventoInput');
-            const texto = input.value.trim();
-            if (texto === "") return;
-
-            const novoEvento = { id: Date.now(), data: formataDataISO(dataSelecionada), texto: texto };
-            const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
-            todosEventos.push(novoEvento);
-            localStorage.setItem('rhEventos', JSON.stringify(todosEventos));
-
-            input.value = '';
-            renderizarEventos(); renderizarCalendario(); 
-        }
-
-        function deletarEvento(id) {
-            let todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
-            todosEventos = todosEventos.filter(ev => ev.id !== id);
-            localStorage.setItem('rhEventos', JSON.stringify(todosEventos));
-            renderizarEventos(); renderizarCalendario();
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            atualizarDashboard();
-            initCalendario();
         });
 
-        function atualizarDashboard() {
-            const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
-            const documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
-            const hoje = new Date();
+        document.getElementById('dashAlertasFerias').innerText = alertasCriticos;
+        document.getElementById('criticoFeriasCount').innerText = alertasCriticos;
+        document.getElementById('muralFerias').innerHTML = muralHTML || '<div class="empty-state">Nenhum alerta de férias.</div>';
 
-            document.getElementById('dashTotalFunc').innerText = funcionarios.length;
-            document.getElementById('dashTotalDocs').innerText = documentos.length;
-            
-            const totalFolha = funcionarios.reduce((acc, f) => acc + (parseFloat(f.salario) || 0), 0);
-            document.getElementById('dashTotalFolha').innerText = totalFolha.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        inicializarGraficos(statusFerias, custoPorCargo);
+    }
 
-            let alertasCriticos = 0; let statusFerias = { aquisitivo: 0, adquirido: 0, vencendo: 0 };
-            let custoPorCargo = {}; let muralHTML = '';
+    function inicializarGraficos(dadosFerias, dadosCargos) {
+        // Destrói instâncias anteriores para evitar erros de canvas
+        if (graficoFeriasInstancia) graficoFeriasInstancia.destroy();
+        if (graficoCargosInstancia) graficoCargosInstancia.destroy();
 
-            funcionarios.forEach(f => {
-                let cargo = f.cargo && f.cargo.trim() !== "" ? f.cargo : "Não Informado";
-                let salario = parseFloat(f.salario) || 0;
-                if(custoPorCargo[cargo]) custoPorCargo[cargo] += salario;
-                else custoPorCargo[cargo] = salario;
+        const ctxF = document.getElementById('graficoFerias').getContext('2d');
+        graficoFeriasInstancia = new Chart(ctxF, {
+            type: 'doughnut',
+            data: {
+                labels: ['Aquisitivo', 'Adquirido', 'Risco'],
+                datasets: [{ 
+                    data: [dadosFerias.aquisitivo, dadosFerias.adquirido, dadosFerias.vencendo], 
+                    backgroundColor: ['#8b5cf6', '#10b981', '#ef4444'],
+                    borderWidth: 0 
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+        });
 
-                if (f.admissao) {
-                    const admissao = new Date(f.admissao);
-                    const meses = Math.floor(Math.abs(hoje - admissao) / (1000 * 60 * 60 * 24 * 30.44));
-                    
-                    if (meses >= 22) {
-                        alertasCriticos++; statusFerias.vencendo++;
-                        muralHTML += `<div style="padding: 12px; margin-bottom: 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: var(--accent-red); font-weight: 500;"><strong>${f.nome}</strong>: ${meses} meses s/ férias!</div>`;
-                    } else if (meses >= 12) {
-                        statusFerias.adquirido++;
-                        muralHTML += `<div style="padding: 12px; margin-bottom: 8px; border-radius: 8px; background: rgba(255,255,255,0.03); color: var(--text-main);"><strong>${f.nome}</strong>: Adquirido (${meses}m).</div>`;
-                    } else { statusFerias.aquisitivo++; }
-                }
-            });
+        const cargosLabels = Object.keys(dadosCargos).slice(0, 5);
+        const cargosValores = cargosLabels.map(l => dadosCargos[l]);
 
-            document.getElementById('dashAlertasFerias').innerText = alertasCriticos;
-            document.getElementById('criticoFeriasCount').innerText = alertasCriticos;
-            if(muralHTML !== "") document.getElementById('muralFerias').innerHTML = muralHTML;
-
-            const containerAtividades = document.getElementById('containerAtividades');
-            if (documentos.length > 0) {
-                let atividadesHTML = '';
-                documentos.slice(0, 10).forEach(doc => {
-                    atividadesHTML += `
-                        <div class="activity-item">
-                            <small>${doc.dataDoc.split('-').reverse().join('/')}</small>
-                            Entrega de <strong>${doc.nomeDoc}</strong> para <span style="color: var(--text-main); font-weight: 500;">${doc.funcNome}</span>.
-                        </div>`;
-                });
-                containerAtividades.innerHTML = atividadesHTML;
+        const ctxC = document.getElementById('graficoCargos').getContext('2d');
+        graficoCargosInstancia = new Chart(ctxC, {
+            type: 'bar',
+            data: {
+                labels: cargosLabels,
+                datasets: [{ label: 'Custo Bruto', data: cargosValores, backgroundColor: '#8b5cf6', borderRadius: 5 }]
+            },
+            options: { 
+                indexAxis: 'y', 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false } } 
             }
-
-            const ctxFerias = document.getElementById('graficoFerias').getContext('2d');
-            new Chart(ctxFerias, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Aquisitivo (< 1 ano)', 'Adquirido (Ok)', 'Risco (> 22m)'],
-                    datasets: [{ data: [statusFerias.aquisitivo, statusFerias.adquirido, statusFerias.vencendo], backgroundColor: ['#8b5cf6', '#10b981', '#ef4444'], borderWidth: 0, hoverOffset: 4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } } }, cutout: '75%', layout: { padding: 10 } }
-            });
-
-            let cargosOrdenados = Object.keys(custoPorCargo).sort((a, b) => custoPorCargo[b] - custoPorCargo[a]).slice(0, 5);
-            let valoresCargos = cargosOrdenados.map(cargo => custoPorCargo[cargo]);
-
-            const ctxCargos = document.getElementById('graficoCargos').getContext('2d');
-            new Chart(ctxCargos, {
-                type: 'bar',
-                data: {
-                    labels: cargosOrdenados.length > 0 ? cargosOrdenados : ['Sem Dados'],
-                    datasets: [{ label: 'Custo Total (R$)', data: valoresCargos.length > 0 ? valoresCargos : [0], backgroundColor: 'rgba(139, 92, 246, 0.8)', borderRadius: 6, barThickness: 24 }]
-                },
-                options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' }, border: {display: false} }, y: { grid: { display: false }, border: {display: false} } },
-                    layout: { padding: { right: 20 } }
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+        });
+    }
+</script>
