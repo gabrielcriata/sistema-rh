@@ -18,13 +18,12 @@
 
         .controles { display: flex; gap: 12px; margin-bottom: 24px; }
         .controles select { flex-grow: 1; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;}
-        .controles select:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);}
         
         button { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); font-family: 'Inter', sans-serif;}
         button:hover { background-color: #7c3aed; transform: translateY(-1px); }
 
-        /* Estética Clássica do Holerite para Impressão e Leitura */
-        .holerite-box { background: #ffffff; color: #111827; border-radius: 8px; padding: 40px; margin-top: 30px; display: none; font-family: 'Courier New', Courier, monospace;}
+        /* Estética do Holerite para Impressão */
+        .holerite-box { background: #ffffff; color: #111827; border-radius: 8px; padding: 40px; margin-top: 30px; display: none; font-family: 'Courier New', Courier, monospace; border: 1px solid #e5e7eb;}
         .holerite-box h3 { color: #111827; border-bottom: 2px solid #111827; margin-top: 0; text-align: center; padding-bottom: 10px; font-family: 'Inter', sans-serif;}
         .dados-funcionario { margin-bottom: 20px; font-size: 14px; line-height: 1.6;}
         
@@ -38,9 +37,9 @@
 
         @media print {
             body { background: white; padding: 0; }
-            .controles, h2, .container { box-shadow: none; padding: 0; background: transparent; border: none; }
-            .holerite-box { display: block; padding: 0; margin: 0;}
-            h2, .controles { display: none; }
+            .container { border: none; box-shadow: none; padding: 0; }
+            .controles, h2 { display: none; }
+            .holerite-box { display: block; border: none; padding: 0; }
         }
     </style>
 </head>
@@ -54,26 +53,26 @@
             <option value="">Selecione um funcionário...</option>
         </select>
         <button onclick="gerarHolerite()">Calcular e Gerar</button>
-        <button onclick="window.print()" style="background-color: #52525b; color: white;">Imprimir PDF</button>
+        <button onclick="window.print()" style="background-color: #52525b;">Imprimir PDF</button>
     </div>
 
     <div id="holeritePronto" class="holerite-box">
         <div>
             <h3>RECIBO DE PAGAMENTO DE SALÁRIO</h3>
-            <p style="font-family: 'Inter', sans-serif; font-weight: 500;">Mês de Referência: <span id="hMesAno"></span></p>
+            <p style="font-family: 'Inter', sans-serif; font-weight: 500; text-align: center;">Mês de Referência: <span id="hMesAno"></span></p>
         </div>
         
         <div class="dados-funcionario">
             <strong>Nome:</strong> <span id="hNome"></span> <br>
             <strong>Cargo:</strong> <span id="hCargo"></span> | <strong>CPF:</strong> <span id="hCpf"></span><br>
-            <strong>Dependentes IRRF:</strong> <span id="hDep"></span>
+            <strong>Dependentes:</strong> <span id="hDep"></span>
         </div>
 
         <table>
             <thead>
                 <tr>
                     <th>Descrição</th>
-                    <th>Referência / Alíquota</th>
+                    <th>Referência</th>
                     <th>Proventos (R$)</th>
                     <th>Descontos (R$)</th>
                 </tr>
@@ -82,33 +81,31 @@
         </table>
 
         <div class="totais">
-            <div>Total de Vencimentos: R$ <span id="hTotalProv">0,00</span></div>
-            <div>Total de Descontos: R$ <span id="hTotalDesc">0,00</span></div>
+            <div>Vencimentos: R$ <span id="hTotalProv">0,00</span></div>
+            <div>Descontos: R$ <span id="hTotalDesc">0,00</span></div>
         </div>
         <div class="totais">
             <div></div>
-            <div class="valor-liquido">Líquido a Receber: R$ <span id="hLiquido">0,00</span></div>
+            <div class="valor-liquido">Líquido: R$ <span id="hLiquido">0,00</span></div>
         </div>
     </div>
 </div>
 
+<script src="script.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", carregarDropdown);
 
     function carregarDropdown() {
         const select = document.getElementById('selectFuncionario');
-        select.innerHTML = '<option value="">Selecione um funcionário...</option>';
+        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
         
-        let funcionarios = [];
-        try { funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || []; } 
-        catch(e) { console.error(e); }
+        select.innerHTML = '<option value="">Selecione um funcionário...</option>';
         
         funcionarios.forEach(f => {
             let option = document.createElement('option');
             option.value = f.id;
-            let salarioLimpo = parseFloat(f.salario);
-            let txtSalario = isNaN(salarioLimpo) ? "0,00" : salarioLimpo.toFixed(2).replace('.', ',');
-            option.textContent = `${f.nome} - R$ ${txtSalario}`;
+            const salarioFormatado = parseFloat(f.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            option.textContent = `${f.nome} (${salarioFormatado})`;
             select.appendChild(option);
         });
 
@@ -116,86 +113,56 @@
         document.getElementById('hMesAno').textContent = `${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}`;
     }
 
-    function calcularINSS(salarioBruto, config) {
-        let desconto = 0;
-        let teto1 = config.inss.teto1; let teto2 = config.inss.teto2;
-        let teto3 = config.inss.teto3; let teto4 = config.inss.teto4;
-        let salario = salarioBruto > teto4 ? teto4 : salarioBruto;
-        let ultimaAliquota = "";
-
-        if (salario > 0) { let valorFaixa = Math.min(salario, teto1); desconto += valorFaixa * 0.075; ultimaAliquota = "7,5%"; }
-        if (salario > teto1) { let valorFaixa = Math.min(salario, teto2) - teto1; desconto += valorFaixa * 0.09; ultimaAliquota = "9,0%"; }
-        if (salario > teto2) { let valorFaixa = Math.min(salario, teto3) - teto2; desconto += valorFaixa * 0.12; ultimaAliquota = "12,0%"; }
-        if (salario > teto3) { let valorFaixa = Math.min(salario, teto4) - teto3; desconto += valorFaixa * 0.14; ultimaAliquota = salarioBruto > teto4 ? "Teto Máx" : "14,0%"; }
-
-        return { valor: desconto, ref: ultimaAliquota + " (Prog.)" };
-    }
-
-    function calcularIRRF(salarioBruto, descontoINSS, dependentes, config) {
-        let deducaoDep = config.geral ? config.geral.deducaoDependente : 189.59;
-        const baseCalculo = salarioBruto - descontoINSS - (dependentes * deducaoDep);
-        
-        let irNormal = 0; let aliquota = 0; let deducao = 0;
-        if (baseCalculo <= config.irrf.teto1) { aliquota = 0; deducao = 0; }
-        else if (baseCalculo <= config.irrf.teto2) { aliquota = 7.5; deducao = config.irrf.ded2; }
-        else if (baseCalculo <= config.irrf.teto3) { aliquota = 15.0; deducao = config.irrf.ded3; }
-        else if (baseCalculo <= config.irrf.teto4) { aliquota = 22.5; deducao = config.irrf.ded4; }
-        else { aliquota = 27.5; deducao = config.irrf.ded5; }
-
-        if (aliquota > 0) { irNormal = (baseCalculo * (aliquota / 100)) - deducao; }
-        if (irNormal < 0) irNormal = 0;
-
-        let irrfFinal = irNormal;
-        let obsRef = aliquota === 0 ? "Isento" : `${aliquota}%`;
-
-        if (salarioBruto <= 5000.00) { irrfFinal = 0; obsRef = "Isento (Regra 2026)"; } 
-        else if (salarioBruto >= 5000.01 && salarioBruto <= 7350.00) {
-            const valorReducao = 978.62 - (0.133145 * salarioBruto);
-            irrfFinal = irNormal - valorReducao;
-            if (irrfFinal < 0) irrfFinal = 0;
-            obsRef = `${aliquota}% (Reduzido)`;
-        }
-
-        return { valor: irrfFinal, ref: obsRef };
-    }
-
     function gerarHolerite() {
         const idSelecionado = document.getElementById('selectFuncionario').value;
-        if (!idSelecionado) { alert("Selecione um funcionário primeiro."); return; }
+        if (!idSelecionado) return alert("Selecione um funcionário!");
 
-        let funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
-        let configFiscais = JSON.parse(localStorage.getItem('rhTabelasFiscais'));
+        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+        const config = JSON.parse(localStorage.getItem('rhTabelasFiscais'));
 
-        if (!configFiscais || !configFiscais.inss) {
-            alert("Atenção: Salve as Tabelas Fiscais primeiro na aba 'Tabelas Fiscais'!");
-            return;
-        }
+        if (!config) return alert("Configure as Tabelas Fiscais primeiro nas Configurações!");
 
         const func = funcionarios.find(f => f.id == idSelecionado);
-        if(!func) { alert("Funcionário não encontrado!"); return; }
+        if(!func) return;
 
         const salario = parseFloat(func.salario) || 0;
         const dependentes = parseInt(func.dependentes) || 0;
 
-        const inss = calcularINSS(salario, configFiscais);
-        const irrf = calcularIRRF(salario, inss.valor, dependentes, configFiscais);
-
+        // CHAMANDO AS FUNÇÕES DO SCRIPT.JS
+        const inss = CalculadoraRH.calcularINSS(salario, config);
+        const irrf = CalculadoraRH.calcularIRRF(salario, inss.valor, dependentes, config);
         const liquido = salario - inss.valor - irrf.valor;
 
+        // Preenchimento do Holerite
         document.getElementById('hNome').textContent = func.nome;
-        document.getElementById('hCargo').textContent = func.cargo || "Não informado";
-        document.getElementById('hCpf').textContent = func.cpf || "Não informado";
+        document.getElementById('hCargo').textContent = func.cargo || "---";
+        document.getElementById('hCpf').textContent = func.cpf || "---";
         document.getElementById('hDep').textContent = dependentes;
 
         document.getElementById('hItens').innerHTML = `
-            <tr><td>Salário Base</td><td>30 dias</td><td>${salario.toFixed(2).replace('.', ',')}</td><td></td></tr>
-            <tr><td>INSS</td><td>${inss.ref}</td><td></td><td>${inss.valor.toFixed(2).replace('.', ',')}</td></tr>
-            <tr><td>IRRF</td><td>${irrf.ref}</td><td></td><td>${irrf.valor.toFixed(2).replace('.', ',')}</td></tr>
+            <tr>
+                <td>Salário Base</td>
+                <td>30 dias</td>
+                <td>${salario.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>INSS Progressivo</td>
+                <td>${inss.ref}</td>
+                <td></td>
+                <td>${inss.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+            </tr>
+            <tr>
+                <td>IRRF (Base: R$ ${(salario - inss.valor).toFixed(2)})</td>
+                <td>${irrf.ref}</td>
+                <td></td>
+                <td>${irrf.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+            </tr>
         `;
 
-        document.getElementById('hTotalProv').textContent = salario.toFixed(2).replace('.', ',');
-        document.getElementById('hTotalDesc').textContent = (inss.valor + irrf.valor).toFixed(2).replace('.', ',');
-        document.getElementById('hLiquido').textContent = liquido.toFixed(2).replace('.', ',');
+        document.getElementById('hTotalProv').textContent = salario.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('hTotalDesc').textContent = (inss.valor + irrf.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('hLiquido').textContent = liquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
         document.getElementById('holeritePronto').style.display = 'block';
     }
