@@ -1,16 +1,27 @@
 function carregarPagina(url, elementoClicado) {
-    // Muda a página dentro do iframe
-    document.getElementById('conteudo-frame').src = url;
+    const frame = document.getElementById('conteudo-frame');
+    const titulo = document.getElementById('titulo-pagina');
 
-    // Remove a classe 'active' de todos os botões do menu
-    let menus = document.getElementsByClassName('menu-item');
-    for (let i = 0; i < menus.length; i++) {
-        menus[i].classList.remove('active');
-    }
+    // 1. Validação de segurança
+    if (!frame || !elementoClicado) return;
 
-    // Adiciona a classe 'active' apenas no botão que foi clicado
+    // 2. Muda a página dentro do iframe
+    frame.src = url;
+
+    // 3. Gerencia o estado 'active' (usando seletores modernos)
+    document.querySelectorAll('.menu-item').forEach(menu => {
+        menu.classList.remove('active');
+    });
+
+    // 4. Ativa o botão clicado
     elementoClicado.classList.add('active');
 
-    // Muda o título lá em cima dependendo do menu
-    document.getElementById('titulo-pagina').innerText = elementoClicado.innerText.substring(3).toUpperCase();
+    // 5. Atualiza o título dinamicamente
+    // Em vez de substring(3), usamos trim() e removemos emojis/ícones de forma mais segura
+    let textoBotao = elementoClicado.innerText.replace(/[^\w\sÀ-ÿ]/gi, '').trim();
+    if (titulo) {
+        titulo.innerText = textoBotao.toUpperCase();
+    }
+    
+    console.log(`📂 Navegando para: ${textoBotao}`);
 }
