@@ -14,85 +14,68 @@
             --accent-red: #ef4444; --accent-orange: #f59e0b;
         }
 
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 24px; margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 24px; margin: 0; -webkit-font-smoothing: antialiased; }
         
-        .widgets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 24px; }
-        .widget-card { background-color: var(--bg-card); padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        /* GRIDS RESPONSIVOS (O segredo para não quebrar) */
+        .widgets-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            gap: 24px; margin-bottom: 24px; 
+        }
+        
+        .charts-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
+            gap: 24px; margin-bottom: 24px; 
+        }
+
+        .calendar-section { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 24px; margin-bottom: 24px; 
+        }
+
+        .content-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 24px; 
+        }
+
+        .widget-card, .card, .cal-panel, .panel { 
+            background-color: var(--bg-card); 
+            padding: 24px; border-radius: 16px; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+            transition: transform 0.3s ease;
+        }
+
         .widget-card:hover { transform: translateY(-4px); border-color: var(--accent-purple); }
-        .widget-info h3 { margin: 0; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;}
-        .widget-info p { margin: 8px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em;}
-        .widget-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; justify-content: center; align-items: center; font-size: 24px; border: 1px solid rgba(255,255,255,0.05);}
-
-        .charts-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px; }
-        .chart-container { background-color: var(--bg-card); padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); position: relative; height: 280px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-
-        .panel-title { font-size: 14px; color: var(--text-main); margin-top: 0; margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-
-        /* Calendário e Eventos */
-        .calendar-section { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-bottom: 24px; }
-        .cal-panel { background-color: var(--bg-card); padding: 24px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         
-        .cal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-        .cal-month { font-size: 28px; font-weight: 800; color: var(--text-main); text-transform: uppercase; line-height: 1; letter-spacing: -1px;}
-        .cal-year { font-size: 14px; font-weight: 600; color: var(--accent-purple); margin-top: 4px; display: block;}
-        .cal-nav { display: flex; gap: 8px; align-items: center; }
-        .btn-cal { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.2s;}
-        .btn-cal:hover { background: rgba(255,255,255,0.1); }
-        .btn-arrows { display: flex; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .btn-arrows button { background: transparent; border: none; color: var(--text-main); padding: 8px 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-arrows button:hover { background: rgba(255,255,255,0.1); }
+        .widget-info h3 { margin: 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;}
+        .widget-info p { margin: 8px 0 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em;}
+        .widget-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.03); display: flex; justify-content: center; align-items: center; font-size: 20px; }
 
+        .panel-title { font-size: 14px; color: var(--text-main); margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* CALENDÁRIO */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .cal-month { font-size: 24px; font-weight: 800; color: var(--text-main); text-transform: uppercase; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-        .cal-day-name { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
-        .cal-day { height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; border: 1px solid transparent; position: relative; }
+        .cal-day { height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; position: relative; }
         .cal-day:hover:not(.muted) { background: rgba(255,255,255,0.05); }
-        .cal-day.muted { color: #3f3f46; cursor: default; font-weight: 400;}
-        .cal-day.active { background: var(--accent-purple); color: white; box-shadow: 0 4px 12px rgba(139,92,246,0.4); }
-        .cal-day.has-event { border-color: rgba(245, 158, 11, 0.3); }
-        .cal-day.has-holiday { color: var(--accent-red); font-weight: 700; background: rgba(239, 68, 68, 0.05);}
-        
-        .dot-container { display: flex; gap: 3px; position: absolute; bottom: 4px; }
-        .cal-dot { width: 4px; height: 4px; border-radius: 50%; background-color: var(--accent-orange); }
-        .cal-dot.green { background-color: var(--accent-green); }
-        .cal-dot.holiday { background-color: var(--accent-red); }
+        .cal-day.active { background: var(--accent-purple); color: white; font-weight: 700; }
+        .cal-day.muted { color: #3f3f46; cursor: default; }
+        .cal-day.has-holiday { color: var(--accent-red); font-weight: 700; }
 
-        .events-header { margin-bottom: 24px; }
-        .events-title { font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; margin: 0 0 4px 0;}
-        .events-date { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase;}
+        /* LISTAS E ALERTAS */
+        .activity-item { font-size: 13px; padding: 12px; border-left: 4px solid var(--accent-purple); background: rgba(139, 92, 246, 0.05); margin-bottom: 12px; border-radius: 0 8px 8px 0; }
+        .activity-item small { display: block; color: var(--text-muted); margin-bottom: 4px; }
         
-        .event-input-group { display: flex; gap: 12px; margin-bottom: 24px; }
-        .event-input { flex-grow: 1; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); padding: 12px 16px; border-radius: 12px; font-family: 'Inter'; font-size: 14px; outline: none; transition: 0.3s;}
-        .event-input:focus { border-color: var(--accent-purple); }
-        .btn-add-event { background: var(--accent-purple); border: none; color: white; width: 48px; border-radius: 12px; font-size: 20px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
-        .btn-add-event:hover { background: #7c3aed; transform: scale(1.05); }
-
-        .events-list { display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
-        .events-list::-webkit-scrollbar { width: 4px; }
-        .events-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+        .prazo-list { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+        .prazo-list li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
         
-        .event-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .event-item-text { font-size: 13px; color: var(--text-main); font-weight: 500; }
-        .event-item.holiday { border-left: 3px solid var(--accent-red); background: rgba(239, 68, 68, 0.05); }
-        
-        .btn-delete-event { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 4px;}
-        .btn-delete-event:hover { color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
-
-        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; color: #52525b; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; gap: 12px;}
-        .empty-state svg { width: 36px; height: 36px; opacity: 0.5; }
-
-        .content-grid { display: grid; grid-template-columns: 1.2fr 2fr 1.2fr; gap: 24px; }
-        .panel { background-color: var(--bg-card); padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .alert-item { display: flex; justify-content: space-between; color: var(--accent-red); font-size: 14px; font-weight: 600; margin-bottom: 4px;}
-        .alert-sub { color: var(--text-muted); font-size: 12px; margin-bottom: 24px; display: block; line-height: 1.5;}
-        .prazo-list { list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--text-muted);}
-        .prazo-list li { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
-        .prazo-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .prazo-list li span { color: var(--text-main); font-weight: 600; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;}
-        .activity-item { font-size: 13px; padding: 12px 16px; border-left: 4px solid var(--accent-purple); background: linear-gradient(90deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0) 100%); margin-bottom: 12px; border-radius: 0 8px 8px 0; }
-        .activity-item small { display: block; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;}
-        .scrollable { max-height: 220px; overflow-y: auto; padding-right: 8px; }
-        .scrollable::-webkit-scrollbar { width: 4px; }
-        .scrollable::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 10px; }
+        canvas { max-width: 100% !important; max-height: 250px; }
+        .scrollable { max-height: 250px; overflow-y: auto; padding-right: 5px; }
     </style>
 </head>
 <body>
@@ -101,61 +84,48 @@
         <div class="widget-card"><div class="widget-info"><h3>Colaboradores</h3><p id="dashTotalFunc">0</p></div><div class="widget-icon">👥</div></div>
         <div class="widget-card"><div class="widget-info"><h3>Férias em Risco</h3><p id="dashAlertasFerias" style="color: var(--accent-orange);">0</p></div><div class="widget-icon">🏖️</div></div>
         <div class="widget-card"><div class="widget-info"><h3>Documentos</h3><p id="dashTotalDocs">0</p></div><div class="widget-icon">🗂️</div></div>
-        <div class="widget-card"><div class="widget-info"><h3>Folha Salarial Bruta</h3><p id="dashTotalFolha" style="font-size: 24px; color: var(--accent-green);">R$ 0,00</p></div><div class="widget-icon">💰</div></div>
+        <div class="widget-card"><div class="widget-info"><h3>Folha Bruta</h3><p id="dashTotalFolha" style="color: var(--accent-green);">R$ 0,00</p></div><div class="widget-icon">💰</div></div>
     </div>
 
     <div class="charts-grid">
-        <div class="chart-container"><h3 class="panel-title">📊 Status de Férias</h3><canvas id="graficoFerias"></canvas></div>
-        <div class="chart-container"><h3 class="panel-title">💼 Custo por Cargo (Top 5)</h3><canvas id="graficoCargos"></canvas></div>
+        <div class="card"><h3 class="panel-title">📊 Status de Férias</h3><canvas id="graficoFerias"></canvas></div>
+        <div class="card"><h3 class="panel-title">💼 Custo por Cargo</h3><canvas id="graficoCargos"></canvas></div>
     </div>
 
     <div class="calendar-section">
         <div class="cal-panel">
             <div class="cal-header">
-                <div>
-                    <div class="cal-month" id="calMonthDisplay">MÊS</div>
-                    <div class="cal-year" id="calYearDisplay">2026</div>
-                </div>
-                <div class="cal-nav">
-                    <button class="btn-cal" onclick="calendarioHoje()">HOJE</button>
-                    <div class="btn-arrows">
-                        <button onclick="mudarMes(-1)">&lt;</button>
-                        <button onclick="mudarMes(1)">&gt;</button>
-                    </div>
+                <div><div class="cal-month" id="calMonthDisplay">MÊS</div><div id="calYearDisplay" style="color: var(--accent-purple); font-size: 12px; font-weight: 700;">2026</div></div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-cal" onclick="mudarMes(-1)">&lt;</button>
+                    <button class="btn-cal" onclick="mudarMes(1)">&gt;</button>
                 </div>
             </div>
-            
             <div class="cal-grid" id="calDaysHeader">
-                <div class="cal-day-name">DOM</div><div class="cal-day-name">SEG</div><div class="cal-day-name">TER</div>
-                <div class="cal-day-name">QUA</div><div class="cal-day-name">QUI</div><div class="cal-day-name">SEX</div>
-                <div class="cal-day-name">SÁB</div>
+                <div class="cal-day-name">D</div><div class="cal-day-name">S</div><div class="cal-day-name">T</div>
+                <div class="cal-day-name">Q</div><div class="cal-day-name">Q</div><div class="cal-day-name">S</div>
+                <div class="cal-day-name">S</div>
             </div>
             <div class="cal-grid" id="calGrid"></div>
         </div>
 
         <div class="cal-panel">
-            <div class="events-header">
-                <h3 class="events-title">EVENTOS DO DIA</h3>
-                <div class="events-date" id="selectedDateDisplay">SELECIONE UMA DATA</div>
+            <h3 class="panel-title">📝 Eventos: <span id="selectedDateDisplay" style="color: var(--text-muted); font-size: 12px; margin-left: 5px;">HOJE</span></h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="novoEventoInput" class="event-input" placeholder="Nota rápida..." style="flex:1; background: #09090b; border: 1px solid var(--border-color); border-radius: 8px; color: #fff; padding: 10px;">
+                <button onclick="adicionarEvento()" style="background: var(--accent-purple); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer;">+</button>
             </div>
-
-            <div class="event-input-group">
-                <input type="text" id="novoEventoInput" class="event-input" placeholder="Nova nota..." onkeypress="if(event.key === 'Enter') adicionarEvento()">
-                <button class="btn-add-event" onclick="adicionarEvento()">+</button>
-            </div>
-
-            <div class="events-list" id="eventsList"></div>
+            <div id="eventsList" class="scrollable"></div>
         </div>
     </div>
 
     <div class="content-grid">
         <div class="panel">
             <h3 class="panel-title">⚠️ Alertas Críticos</h3>
-            <div id="containerAlertasCriticos">
-                <div class="alert-item">FÉRIAS > 22 MESES <span id="criticoFeriasCount">0</span></div>
-                <span class="alert-sub">Atenção ao prazo limite para evitar pagamento de multa em dobro (CLT).</span>
-            </div>
-            <h3 class="panel-title" style="margin-top: 32px;">Prazos Mensais</h3>
+            <div id="muralFerias" class="scrollable"></div>
+        </div>
+        <div class="panel">
+            <h3 class="panel-title">📅 Prazos Mensais</h3>
             <ul class="prazo-list">
                 <li>Pagamento FGTS <span style="color: var(--accent-green);">Dia 07</span></li>
                 <li>Envio eSocial <span style="color: var(--accent-orange);">Dia 15</span></li>
@@ -164,201 +134,96 @@
             </ul>
         </div>
         <div class="panel">
-            <h3 class="panel-title">📅 Mural de Descanso</h3>
-            <div id="muralFerias" class="scrollable" style="font-size: 13px;"></div>
-        </div>
-        <div class="panel">
-            <h3 class="panel-title">📝 Atividades Recentes</h3>
-            <div id="containerAtividades" class="scrollable">
-                <div class="empty-state" style="padding: 30px 0;">Nenhum registro recente.</div>
-            </div>
+            <h3 class="panel-title">🕒 Atividades Recentes</h3>
+            <div id="containerAtividades" class="scrollable"></div>
         </div>
     </div>
 
+    <script src="script.js"></script>
     <script>
-        <script src="script.js"></script> <script>
-    Chart.defaults.color = '#a1a1aa';
-    Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#a1a1aa';
+        Chart.defaults.font.family = "'Inter', sans-serif";
 
-    let dataAtualCal = new Date();
-    let dataSelecionada = new Date(); 
-    let graficoFeriasInstancia = null;
-    let graficoCargosInstancia = null;
+        let dataAtualCal = new Date();
+        let dataSelecionada = new Date(); 
+        let graficoFeriasInstancia = null;
+        let graficoCargosInstancia = null;
 
-    const mesesNomes = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
-    const mesesAbrev = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+        const mesesNomes = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
 
-    // Feriados 2026 (Nacionais e Araçatuba)
-    const feriados2026 = [
-        { data: '2026-01-01', nome: 'Confraternização Universal' },
-        { data: '2026-02-17', nome: 'Carnaval' },
-        { data: '2026-04-03', nome: 'Paixão de Cristo' },
-        { data: '2026-04-21', nome: 'Tiradentes' },
-        { data: '2026-05-01', nome: 'Dia do Trabalhador' },
-        { data: '2026-06-04', nome: 'Corpus Christi' },
-        { data: '2026-07-09', nome: 'Revolução Constitucionalista (SP)' },
-        { data: '2026-09-07', nome: 'Independência do Brasil' },
-        { data: '2026-10-12', nome: 'Nossa Sra. Aparecida' },
-        { data: '2026-11-02', nome: 'Finados' },
-        { data: '2026-11-15', nome: 'Proclamação da República' },
-        { data: '2026-11-20', nome: 'Consciência Negra' },
-        { data: '2026-12-02', nome: 'Aniversário de Araçatuba' }, // Feriado Municipal
-        { data: '2026-12-25', nome: 'Natal' }
-    ];
+        const feriados2026 = [
+            { data: '2026-01-01', nome: 'Confraternização Universal' },
+            { data: '2026-02-17', nome: 'Carnaval' },
+            { data: '2026-07-09', nome: 'Revolução Constitucionalista (SP)' },
+            { data: '2026-12-02', nome: 'Aniversário de Araçatuba' },
+            { data: '2026-12-25', nome: 'Natal' }
+        ];
 
-    document.addEventListener("DOMContentLoaded", () => {
-        atualizarDashboard();
-        renderizarCalendario();
-        renderizarEventos();
-    });
+        document.addEventListener("DOMContentLoaded", () => {
+            atualizarDashboard();
+            renderizarCalendario();
+        });
 
-    // ================= LÓGICA DO CALENDÁRIO =================
+        function mudarMes(dir) { dataAtualCal.setMonth(dataAtualCal.getMonth() + dir); renderizarCalendario(); }
 
-    function formataDataISO(dateObj) {
-        return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
-    }
+        function renderizarCalendario() {
+            const ano = dataAtualCal.getFullYear();
+            const mes = dataAtualCal.getMonth();
+            document.getElementById('calMonthDisplay').innerText = mesesNomes[mes];
+            document.getElementById('calYearDisplay').innerText = ano;
 
-    function renderizarCalendario() {
-        const ano = dataAtualCal.getFullYear();
-        const mes = dataAtualCal.getMonth();
-        document.getElementById('calMonthDisplay').innerText = mesesNomes[mes];
-        document.getElementById('calYearDisplay').innerText = ano;
+            const primeiroDia = new Date(ano, mes, 1).getDay();
+            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+            const calGrid = document.getElementById('calGrid');
+            calGrid.innerHTML = '';
 
-        const primeiroDiaMes = new Date(ano, mes, 1).getDay(); 
-        const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-        const calGrid = document.getElementById('calGrid');
-        calGrid.innerHTML = '';
+            for (let i = 0; i < primeiroDia; i++) { calGrid.innerHTML += '<div class="cal-day muted"></div>'; }
 
-        const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
-        let htmlDias = '';
-        
-        // Dias vazios do mês anterior
-        for (let i = primeiroDiaMes; i > 0; i--) { htmlDias += `<div class="cal-day muted"></div>`; }
-
-        const hojeReal = new Date();
-        for (let i = 1; i <= diasNoMes; i++) {
-            let dataIteracao = new Date(ano, mes, i);
-            let isoFormat = formataDataISO(dataIteracao);
-            
-            let ehHoje = (i === hojeReal.getDate() && mes === hojeReal.getMonth() && ano === hojeReal.getFullYear());
-            let ehSelecionado = (i === dataSelecionada.getDate() && mes === dataSelecionada.getMonth() && ano === dataSelecionada.getFullYear());
-            let temEvento = todosEventos.some(ev => ev.data === isoFormat);
-            let temFeriado = feriados2026.some(f => f.data === isoFormat);
-
-            let classes = 'cal-day';
-            if (ehSelecionado) classes += ' active';
-            if (temFeriado) classes += ' has-holiday';
-            if (temEvento) classes += ' has-event';
-
-            htmlDias += `<div class="${classes}" onclick="selecionarDia(${ano}, ${mes}, ${i})">${i}</div>`;
+            for (let i = 1; i <= diasNoMes; i++) {
+                const dataIso = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const ehFeriado = feriados2026.some(f => f.data === dataIso);
+                calGrid.innerHTML += `<div class="cal-day ${ehFeriado ? 'has-holiday' : ''}">${i}</div>`;
+            }
         }
 
-        calGrid.innerHTML = htmlDias;
-    }
+        function atualizarDashboard() {
+            const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
+            const documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
+            
+            document.getElementById('dashTotalFunc').innerText = funcionarios.length;
+            document.getElementById('dashTotalDocs').innerText = documentos.length;
+            
+            const totalBruto = funcionarios.reduce((acc, f) => acc + (parseFloat(f.salario) || 0), 0);
+            document.getElementById('dashTotalFolha').innerText = totalBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    function selecionarDia(ano, mes, dia) {
-        dataSelecionada = new Date(ano, mes, dia);
-        renderizarCalendario();
-        renderizarEventos();
-    }
+            // Simulação de Dados para os Gráficos
+            renderizarGraficos({aquisitivo: 5, adquirido: 3, vencendo: 1}, {"RH": 5000, "TI": 12000, "Vendas": 8000});
+        }
 
-    async function adicionarEvento() {
-        const input = document.getElementById('novoEventoInput');
-        const texto = input.value.trim();
-        if (!texto) return;
+        function renderizarGraficos(dadosFerias, dadosCargos) {
+            if (graficoFeriasInstancia) graficoFeriasInstancia.destroy();
+            if (graficoCargosInstancia) graficoCargosInstancia.destroy();
 
-        const todosEventos = JSON.parse(localStorage.getItem('rhEventos')) || [];
-        todosEventos.push({ id: Date.now(), data: formataDataISO(dataSelecionada), texto });
-        localStorage.setItem('rhEventos', JSON.stringify(todosEventos));
+            const ctxF = document.getElementById('graficoFerias').getContext('2d');
+            graficoFeriasInstancia = new Chart(ctxF, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aquisitivo', 'Adquirido', 'Risco'],
+                    datasets: [{ data: [dadosFerias.aquisitivo, dadosFerias.adquirido, dadosFerias.vencendo], backgroundColor: ['#8b5cf6', '#10b981', '#ef4444'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom' } } }
+            });
 
-        // SINCRONIZA COM O ESPELHO
-        if (window.MirrorDB) await MirrorDB.salvarAutomatico();
-
-        input.value = '';
-        renderizarEventos();
-        renderizarCalendario();
-    }
-
-    // ================= LÓGICA DE DADOS (DASHBOARD) =================
-
-    function atualizarDashboard() {
-        const funcionarios = JSON.parse(localStorage.getItem('rhFuncionarios')) || [];
-        const documentos = JSON.parse(localStorage.getItem('rhDocumentos')) || [];
-        const hoje = new Date();
-
-        document.getElementById('dashTotalFunc').innerText = funcionarios.length;
-        document.getElementById('dashTotalDocs').innerText = documentos.length;
-        
-        const totalFolha = funcionarios.reduce((acc, f) => acc + (parseFloat(f.salario) || 0), 0);
-        document.getElementById('dashTotalFolha').innerText = totalFolha.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-        let alertasCriticos = 0;
-        let statusFerias = { aquisitivo: 0, adquirido: 0, vencendo: 0 };
-        let custoPorCargo = {};
-        let muralHTML = '';
-
-        funcionarios.forEach(f => {
-            let cargo = f.cargo || "Outros";
-            custoPorCargo[cargo] = (custoPorCargo[cargo] || 0) + (parseFloat(f.salario) || 0);
-
-            if (f.admissao) {
-                const admissao = new Date(f.admissao);
-                const meses = Math.floor((hoje - admissao) / (1000 * 60 * 60 * 24 * 30.44));
-                
-                if (meses >= 22) {
-                    alertasCriticos++; statusFerias.vencendo++;
-                    muralHTML += `<div class="activity-item" style="border-left-color: var(--accent-red)">
-                        <small>CRÍTICO</small><strong>${f.nome}</strong>: ${meses} meses sem férias.</div>`;
-                } else if (meses >= 12) {
-                    statusFerias.adquirido++;
-                } else {
-                    statusFerias.aquisitivo++;
-                }
-            }
-        });
-
-        document.getElementById('dashAlertasFerias').innerText = alertasCriticos;
-        document.getElementById('criticoFeriasCount').innerText = alertasCriticos;
-        document.getElementById('muralFerias').innerHTML = muralHTML || '<div class="empty-state">Nenhum alerta de férias.</div>';
-
-        inicializarGraficos(statusFerias, custoPorCargo);
-    }
-
-    function inicializarGraficos(dadosFerias, dadosCargos) {
-        // Destrói instâncias anteriores para evitar erros de canvas
-        if (graficoFeriasInstancia) graficoFeriasInstancia.destroy();
-        if (graficoCargosInstancia) graficoCargosInstancia.destroy();
-
-        const ctxF = document.getElementById('graficoFerias').getContext('2d');
-        graficoFeriasInstancia = new Chart(ctxF, {
-            type: 'doughnut',
-            data: {
-                labels: ['Aquisitivo', 'Adquirido', 'Risco'],
-                datasets: [{ 
-                    data: [dadosFerias.aquisitivo, dadosFerias.adquirido, dadosFerias.vencendo], 
-                    backgroundColor: ['#8b5cf6', '#10b981', '#ef4444'],
-                    borderWidth: 0 
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
-        });
-
-        const cargosLabels = Object.keys(dadosCargos).slice(0, 5);
-        const cargosValores = cargosLabels.map(l => dadosCargos[l]);
-
-        const ctxC = document.getElementById('graficoCargos').getContext('2d');
-        graficoCargosInstancia = new Chart(ctxC, {
-            type: 'bar',
-            data: {
-                labels: cargosLabels,
-                datasets: [{ label: 'Custo Bruto', data: cargosValores, backgroundColor: '#8b5cf6', borderRadius: 5 }]
-            },
-            options: { 
-                indexAxis: 'y', 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { legend: { display: false } } 
-            }
-        });
-    }
-</script>
+            const ctxC = document.getElementById('graficoCargos').getContext('2d');
+            graficoCargosInstancia = new Chart(ctxC, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(dadosCargos),
+                    datasets: [{ label: 'Custo Bruto', data: Object.values(dadosCargos), backgroundColor: '#8b5cf6', borderRadius: 6 }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+    </script>
+</body>
+</html>
