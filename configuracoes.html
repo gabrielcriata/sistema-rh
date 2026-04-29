@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RH - Tabelas Fiscais</title>
+    <title>RH - Configurações e Backup</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,6 +14,7 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 24px; margin: 0; -webkit-font-smoothing: antialiased; }
         .container { background-color: var(--bg-card); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        
         h2 { color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-top: 0; font-weight: 600; font-size: 20px;}
         h3 { color: var(--text-main); margin-top: 32px; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px;}
 
@@ -21,125 +22,171 @@
         .form-group { display: flex; flex-direction: column; }
         
         label { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;}
-        input { width: 100%; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; font-family: 'Inter', sans-serif; transition: 0.3s; }
+        input { width: 100%; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; font-family: 'Inter'; }
         input:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
-        input.tabela-input { text-align: center; padding: 8px; }
+        
+        /* Botões Estilizados */
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+        button { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; font-family: 'Inter'; }
+        
+        .btn-primary { background-color: var(--accent-purple); width: 100%; }
+        .btn-primary:hover { background-color: #7c3aed; transform: translateY(-1px); }
+        
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
 
-        button, .btn-salvar { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; background-color: var(--accent-purple); width: 100%; margin-top: 16px; font-family: 'Inter', sans-serif;}
-        .btn-salvar:hover { background-color: #7c3aed; transform: translateY(-1px); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.2); width: auto; font-size: 11px; padding: 6px 12px; margin-top: 20px; }
+        .btn-danger:hover { background: var(--accent-red); color: white; }
 
+        /* Tabelas */
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 16px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
         th, td { padding: 14px 16px; text-align: center; border-bottom: 1px solid var(--border-color); }
-        th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background-color: rgba(255,255,255,0.02); }
+        th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: 600; }
         
-        .col-texto { color: var(--text-muted); font-weight: 500; }
         .msg-sucesso { display: none; background-color: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; font-weight: 600; }
+
+        /* Esconder input de arquivo real */
+        #inputBackup { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Parâmetros e Tabelas Fiscais (2026)</h2>
+    <h2>Configurações do Sistema</h2>
     
+    <h3>🛡️ Segurança e Backup de Dados</h3>
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        Como o sistema não possui um servidor central, seus dados ficam guardados apenas neste navegador. 
+        <strong>Recomendamos exportar um backup semanalmente.</strong>
+    </p>
+
+    <div class="btn-group">
+        <button class="btn-primary" onclick="exportarBackup()">📥 Exportar Backup (JSON)</button>
+        <button class="btn-outline" onclick="document.getElementById('inputBackup').click()">📤 Importar Backup</button>
+        <input type="file" id="inputBackup" accept=".json" onchange="importarBackup(event)">
+    </div>
+
+    <div id="msgSucesso" class="msg-sucesso">Operação realizada com sucesso!</div>
+
+    <h3 style="margin-top: 48px;">💰 Parâmetros Fiscais (2026)</h3>
     <div class="grid-geral">
         <div class="form-group">
-            <label>Salário Mínimo Vigente (R$):</label>
+            <label>Salário Mínimo (R$):</label>
             <input type="number" id="salarioMinimo" step="0.01">
         </div>
         <div class="form-group">
-            <label>Dedução por Dependente IRRF (R$):</label>
+            <label>Dedução Dependente IRRF:</label>
             <input type="number" id="deducaoDependente" step="0.01">
         </div>
     </div>
 
-    <h3>Tabela de INSS (Progressivo Oficial)</h3>
-    <table>
-        <tr>
-            <th>Faixa</th>
-            <th>De (R$)</th>
-            <th>Até (R$)</th>
-            <th>Alíquota (%)</th>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td class="col-texto">0,00</td>
-            <td><input type="number" id="inssTeto1" class="tabela-input" onchange="atualizarLimites()"></td>
-            <td class="col-texto">7.5</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td class="col-texto" id="inssDe2">-</td>
-            <td><input type="number" id="inssTeto2" class="tabela-input" onchange="atualizarLimites()"></td>
-            <td class="col-texto">9.0</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td class="col-texto" id="inssDe3">-</td>
-            <td><input type="number" id="inssTeto3" class="tabela-input" onchange="atualizarLimites()"></td>
-            <td class="col-texto">12.0</td>
-        </tr>
-        <tr>
-            <td>4 (Teto Máx)</td>
-            <td class="col-texto" id="inssDe4">-</td>
-            <td><input type="number" id="inssTeto4" class="tabela-input"></td>
-            <td class="col-texto">14.0</td>
-        </tr>
+    <h3>Tabela INSS (Progressivo)</h3>
+    <table id="tabelaInss">
+        <tr><th>Faixa</th><th>Até (R$)</th><th>Alíquota (%)</th></tr>
+        <tr><td>1</td><td><input type="number" id="inssTeto1" class="tabela-input"></td><td>7.5</td></tr>
+        <tr><td>2</td><td><input type="number" id="inssTeto2" class="tabela-input"></td><td>9.0</td></tr>
+        <tr><td>3</td><td><input type="number" id="inssTeto3" class="tabela-input"></td><td>12.0</td></tr>
+        <tr><td>4 (Teto)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td></tr>
     </table>
 
-    <h3>Tabela de IRRF</h3>
+    <h3>Tabela IRRF</h3>
     <table>
-        <tr>
-            <th>Faixa</th>
-            <th>De (R$)</th>
-            <th>Até (R$)</th>
-            <th>Alíquota (%)</th>
-            <th>Parcela a Deduzir (R$)</th>
-        </tr>
-        <tr>
-            <td>1 (Isento)</td>
-            <td class="col-texto">0,00</td>
-            <td><input type="number" id="irrfTeto1" class="tabela-input" onchange="atualizarLimites()"></td>
-            <td class="col-texto">0.0</td>
-            <td class="col-texto">0,00</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td class="col-texto" id="irrfDe2">-</td>
-            <td><input type="number" id="irrfTeto2" class="tabela-input" onchange="atualizarLimites()"></td>
-            <td class="col-texto">7.5</td>
-            <td><input type="number" id="irrfDed2" class="tabela-input"></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td class="col-texto" id="irrfDe3">-</td>
-            <td><input type="number" id="irrfTeto3" class="tabela-input" onchange="atualizarLimites()"></td>
-            <td class="col-texto">15.0</td>
-            <td><input type="number" id="irrfDed3" class="tabela-input"></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td class="col-texto" id="irrfDe4">-</td>
-            <td><input type="number" id="irrfTeto4" class="tabela-input" onchange="atualizarLimites()"></td>
-            <td class="col-texto">22.5</td>
-            <td><input type="number" id="irrfDed4" class="tabela-input"></td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td class="col-texto" id="irrfDe5">-</td>
-            <td class="col-texto">Infinidade</td>
-            <td class="col-texto">27.5</td>
-            <td><input type="number" id="irrfDed5" class="tabela-input"></td>
-        </tr>
+        <tr><th>Faixa</th><th>Até (R$)</th><th>Alíquota (%)</th><th>Parcela a Deduzir (R$)</th></tr>
+        <tr><td>1 (Isento)</td><td><input type="number" id="irrfTeto1" class="tabela-input"></td><td>0.0</td><td>0,00</td></tr>
+        <tr><td>2</td><td><input type="number" id="irrfTeto2" class="tabela-input"></td><td>7.5</td><td><input type="number" id="irrfDed2" class="tabela-input"></td></tr>
+        <tr><td>3</td><td><input type="number" id="irrfTeto3" class="tabela-input"></td><td>15.0</td><td><input type="number" id="irrfDed3" class="tabela-input"></td></tr>
+        <tr><td>4</td><td><input type="number" id="irrfTeto4" class="tabela-input"></td><td>22.5</td><td><input type="number" id="irrfDed4" class="tabela-input"></td></tr>
+        <tr><td>5</td><td>Infinidade</td><td>27.5</td><td><input type="number" id="irrfDed5" class="tabela-input"></td></tr>
     </table>
 
-    <button class="btn-salvar" onclick="salvarTabelas()">Salvar Tabelas no Sistema</button>
-    <div id="msgSucesso" class="msg-sucesso">Tabelas atualizadas com sucesso!</div>
+    <button class="btn-primary" onclick="salvarTabelas()" style="margin-top: 24px;">Salvar Tabelas Fiscais</button>
+
+    <hr style="margin-top: 50px; border: 0; border-top: 1px solid var(--border-color);">
+    <button class="btn-danger" onclick="limparTudo()">⚠️ LIMPAR TODOS OS DADOS DO SISTEMA</button>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", carregarTabelas);
+
+    // ================= FUNÇÕES DE BACKUP (NOVO) =================
+
+    function exportarBackup() {
+        // Coleta todas as chaves do RH guardadas no navegador
+        const chaves = ['rhFuncionarios', 'rhTabelasFiscais', 'rhDocumentos', 'rhFaltas', 'rhEventos'];
+        const backup = {};
+
+        chaves.forEach(chave => {
+            const dado = localStorage.getItem(chave);
+            if (dado) backup[chave] = JSON.parse(dado);
+        });
+
+        if (Object.keys(backup).length === 0) {
+            alert("Não há dados para exportar.");
+            return;
+        }
+
+        // Transforma em arquivo JSON
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        
+        const dataHora = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `backup_hcm_master_${dataHora}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        
+        mostrarSucesso("Backup exportado com sucesso!");
+    }
+
+    function importarBackup(event) {
+        const arquivo = event.target.files[0];
+        if (!arquivo) return;
+
+        const leitor = new FileReader();
+        leitor.onload = function(e) {
+            try {
+                const dadosImportados = JSON.parse(e.target.result);
+                
+                // Validação simples: verifica se existem chaves conhecidas
+                const chavesValidas = ['rhFuncionarios', 'rhTabelasFiscais', 'rhDocumentos', 'rhFaltas', 'rhEventos'];
+                let importouAlgo = false;
+
+                chavesValidas.forEach(chave => {
+                    if (dadosImportados[chave]) {
+                        localStorage.setItem(chave, JSON.stringify(dadosImportados[chave]));
+                        importouAlgo = true;
+                    }
+                });
+
+                if (importouAlgo) {
+                    mostrarSucesso("Backup restaurado! O sistema irá reiniciar.");
+                    setTimeout(() => { window.location.reload(); }, 2000);
+                } else {
+                    alert("O arquivo selecionado não parece ser um backup válido do HCM Master.");
+                }
+            } catch (err) {
+                alert("Erro ao ler o arquivo. Verifique se é um arquivo .json válido.");
+            }
+        };
+        leitor.readAsText(arquivo);
+    }
+
+    function limparTudo() {
+        if (confirm("ATENÇÃO: Isso apagará TODOS os funcionários, documentos e configurações permanentemente. Deseja continuar?")) {
+            localStorage.clear();
+            window.location.reload();
+        }
+    }
+
+    function mostrarSucesso(texto) {
+        const msg = document.getElementById('msgSucesso');
+        msg.innerText = texto;
+        msg.style.display = 'block';
+        setTimeout(() => { msg.style.display = 'none'; }, 4000);
+    }
+
+    // ================= FUNÇÕES DE TABELAS (EXISTENTES) =================
 
     function carregarTabelas() {
         const dados = JSON.parse(localStorage.getItem('rhTabelasFiscais')) || {
@@ -150,33 +197,18 @@
 
         document.getElementById('salarioMinimo').value = dados.geral.salarioMinimo;
         document.getElementById('deducaoDependente').value = dados.geral.deducaoDependente;
-        
         document.getElementById('inssTeto1').value = dados.inss.teto1;
         document.getElementById('inssTeto2').value = dados.inss.teto2;
         document.getElementById('inssTeto3').value = dados.inss.teto3;
         document.getElementById('inssTeto4').value = dados.inss.teto4;
-
         document.getElementById('irrfTeto1').value = dados.irrf.teto1;
         document.getElementById('irrfTeto2').value = dados.irrf.teto2;
-        document.getElementById('irrfTeto3').value = dados.irrf.teto3;
-        document.getElementById('irrfTeto4').value = dados.irrf.teto4;
         document.getElementById('irrfDed2').value = dados.irrf.ded2;
+        document.getElementById('irrfTeto3').value = dados.irrf.teto3;
         document.getElementById('irrfDed3').value = dados.irrf.ded3;
+        document.getElementById('irrfTeto4').value = dados.irrf.teto4;
         document.getElementById('irrfDed4').value = dados.irrf.ded4;
         document.getElementById('irrfDed5').value = dados.irrf.ded5;
-
-        atualizarLimites();
-    }
-
-    function atualizarLimites() {
-        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('inssDe2').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto1').value || 0) + 0.01);
-        document.getElementById('inssDe3').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto2').value || 0) + 0.01);
-        document.getElementById('inssDe4').innerText = formatarMoeda(parseFloat(document.getElementById('inssTeto3').value || 0) + 0.01);
-        document.getElementById('irrfDe2').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto1').value || 0) + 0.01);
-        document.getElementById('irrfDe3').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto2').value || 0) + 0.01);
-        document.getElementById('irrfDe4').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto3').value || 0) + 0.01);
-        document.getElementById('irrfDe5').innerText = formatarMoeda(parseFloat(document.getElementById('irrfTeto4').value || 0) + 0.01);
     }
 
     function salvarTabelas() {
@@ -202,14 +234,10 @@
                 ded5: parseFloat(document.getElementById('irrfDed5').value)
             }
         };
-
         localStorage.setItem('rhTabelasFiscais', JSON.stringify(dados));
-        atualizarLimites();
-
-        const msg = document.getElementById('msgSucesso');
-        msg.style.display = 'block';
-        setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        mostrarSucesso("Tabelas Fiscais salvas com sucesso!");
     }
 </script>
+
 </body>
 </html>
