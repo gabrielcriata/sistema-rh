@@ -1,50 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RH - Configurações e Backup</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-body: #09090b; --bg-card: #18181b; --border-color: #27272a;
-            --text-main: #f4f4f5; --text-muted: #a1a1aa;
-            --accent-purple: #8b5cf6; --accent-green: #10b981; --accent-red: #ef4444;
-        }
-
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 24px; margin: 0; -webkit-font-smoothing: antialiased; }
-        .container { background-color: var(--bg-card); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 900px; margin: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        
-        h2 { color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-top: 0; font-weight: 600; font-size: 20px;}
-        h3 { color: var(--text-main); margin-top: 32px; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px;}
-
-        .grid-geral { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-        .form-group { display: flex; flex-direction: column; }
-        
-        label { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;}
-        input { width: 100%; padding: 12px; background: #09090b; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; font-family: 'Inter'; }
-        input:focus { border-color: var(--accent-purple); outline: none; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
-        
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-        button { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #fff; font-size: 14px; font-family: 'Inter'; }
-        
-        .btn-primary { background-color: var(--accent-purple); width: 100%; }
-        .btn-primary:hover { background-color: #7c3aed; transform: translateY(-1px); }
-        
-        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-        .btn-outline:hover { background: rgba(255,255,255,0.05); }
-
-        .status-mirror { background: rgba(139, 92, 246, 0.05); border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-green); display: inline-block; margin-right: 8px; box-shadow: 0 0 10px var(--accent-green); }
-
-        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 16px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
-        th, td { padding: 14px 16px; text-align: center; border-bottom: 1px solid var(--border-color); }
-        th { background-color: rgba(255,255,255,0.02); color: var(--text-muted); text-transform: uppercase; font-size: 11px; font-weight: 600; }
-        
-        .msg-sucesso { display: none; background-color: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; font-weight: 600; }
-        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.2); width: auto; font-size: 11px; padding: 6px 12px; margin-top: 20px; }
-    </style>
-</head>
+    </head>
 <body>
 
 <div class="container">
@@ -55,13 +12,13 @@
         <div>
             <span class="status-dot"></span>
             <span style="font-size: 13px; font-weight: 600;">Sincronização Offline Ativa</span>
-            <p style="font-size: 11px; color: var(--text-muted); margin: 4px 0 0 18px;">O sistema salva uma cópia automática no IndexedDB a cada alteração.</p>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 4px 0 0 18px;">Backup automático no IndexedDB a cada alteração.</p>
         </div>
         <button class="btn-outline" style="width: auto; padding: 8px 16px; font-size: 12px;" onclick="restaurarDoEspelho()">🔄 Restaurar do Espelho</button>
     </div>
 
     <div class="btn-group" style="margin-top: 24px;">
-        <button class="btn-primary" onclick="exportarBackup()">📥 Exportar Backup (Manual)</button>
+        <button class="btn-primary" onclick="exportarBackup()">📥 Exportar Backup (JSON)</button>
         <button class="btn-outline" onclick="document.getElementById('inputBackup').click()">📤 Importar Backup Externo</button>
         <input type="file" id="inputBackup" style="display:none" accept=".json" onchange="importarBackup(event)">
     </div>
@@ -83,20 +40,20 @@
     <h3>Tabela INSS (Progressivo)</h3>
     <table>
         <tr><th>Faixa</th><th>Até (R$)</th><th>Alíquota (%)</th></tr>
-        <tr><td>1</td><td><input type="number" id="inssTeto1" class="tabela-input"></td><td>7.5</td></tr>
-        <tr><td>2</td><td><input type="number" id="inssTeto2" class="tabela-input"></td><td>9.0</td></tr>
-        <tr><td>3</td><td><input type="number" id="inssTeto3" class="tabela-input"></td><td>12.0</td></tr>
-        <tr><td>4 (Teto)</td><td><input type="number" id="inssTeto4" class="tabela-input"></td><td>14.0</td></tr>
+        <tr><td>1</td><td><input type="number" id="inssTeto1"></td><td>7.5</td></tr>
+        <tr><td>2</td><td><input type="number" id="inssTeto2"></td><td>9.0</td></tr>
+        <tr><td>3</td><td><input type="number" id="inssTeto3"></td><td>12.0</td></tr>
+        <tr><td>4 (Teto)</td><td><input type="number" id="inssTeto4"></td><td>14.0</td></tr>
     </table>
 
     <h3>Tabela IRRF</h3>
     <table>
-        <tr><th>Faixa</th><th>Até (R$)</th><th>Alíquota (%)</th><th>Parcela a Deduzir (R$)</th></tr>
-        <tr><td>1 (Isento)</td><td><input type="number" id="irrfTeto1" class="tabela-input"></td><td>0.0</td><td>0,00</td></tr>
-        <tr><td>2</td><td><input type="number" id="irrfTeto2" class="tabela-input"></td><td>7.5</td><td><input type="number" id="irrfDed2" class="tabela-input"></td></tr>
-        <tr><td>3</td><td><input type="number" id="irrfTeto3" class="tabela-input"></td><td>15.0</td><td><input type="number" id="irrfDed3" class="tabela-input"></td></tr>
-        <tr><td>4</td><td><input type="number" id="irrfTeto4" class="tabela-input"></td><td>22.5</td><td><input type="number" id="irrfDed4" class="tabela-input"></td></tr>
-        <tr><td>5</td><td>Infinidade</td><td>27.5</td><td><input type="number" id="irrfDed5" class="tabela-input"></td></tr>
+        <tr><th>Faixa</th><th>Até (R$)</th><th>Alíquota (%)</th><th>Parcela Deduzir (R$)</th></tr>
+        <tr><td>1 (Isento)</td><td><input type="number" id="irrfTeto1"></td><td>0.0</td><td>0,00</td></tr>
+        <tr><td>2</td><td><input type="number" id="irrfTeto2"></td><td>7.5</td><td><input type="number" id="irrfDed2"></td></tr>
+        <tr><td>3</td><td><input type="number" id="irrfTeto3"></td><td>15.0</td><td><input type="number" id="irrfDed3"></td></tr>
+        <tr><td>4</td><td><input type="number" id="irrfTeto4"></td><td>22.5</td><td><input type="number" id="irrfDed4"></td></tr>
+        <tr><td>5</td><td>Infinidade</td><td>27.5</td><td><input type="number" id="irrfDed5"></td></tr>
     </table>
 
     <button class="btn-primary" onclick="salvarTabelas()" style="margin-top: 24px;">Salvar Tabelas Fiscais</button>
@@ -105,68 +62,9 @@
     <button class="btn-danger" onclick="limparTudo()">⚠️ APAGAR TUDO (REINICIAR SISTEMA)</button>
 </div>
 
+<script src="script.js"></script>
 <script>
-    // ================= MOTOR DO ESPELHO (IndexedDB) =================
-    const MirrorDB = {
-        name: "HCM_Mirror_DB",
-        version: 1,
-        store: "backups",
-        
-        abrir() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(this.name, this.version);
-                request.onupgradeneeded = e => e.target.result.createObjectStore(this.store);
-                request.onsuccess = e => resolve(e.target.result);
-                request.onerror = e => reject(e.target.error);
-            });
-        },
-
-        async salvar(dados) {
-            const db = await this.abrir();
-            const tx = db.transaction(this.store, "readwrite");
-            tx.objectStore(this.store).put(dados, "ultimo_backup_automatico");
-            return tx.complete;
-        },
-
-        async buscar() {
-            const db = await this.abrir();
-            return new Promise((resolve) => {
-                const request = db.transaction(this.store).objectStore(this.store).get("ultimo_backup_automatico");
-                request.onsuccess = () => resolve(request.result);
-            });
-        }
-    };
-
-    // Sincroniza o localStorage com o IndexedDB automaticamente
-    async function sincronizarEspelho() {
-        const chaves = ['rhFuncionarios', 'rhTabelasFiscais', 'rhDocumentos', 'rhFaltas', 'rhEventos', 'rhEventosRH'];
-        const backup = {};
-        chaves.forEach(k => {
-            const d = localStorage.getItem(k);
-            if(d) backup[k] = JSON.parse(d);
-        });
-        await MirrorDB.salvar(backup);
-        console.log("Mirror atualizado automaticamente.");
-    }
-
-    async function restaurarDoEspelho() {
-        const dados = await MirrorDB.buscar();
-        if(!dados) { alert("Nenhum dado encontrado no espelho."); return; }
-        
-        if(confirm("Deseja restaurar os dados do último espelho automático? Isso substituirá o que estiver na tela.")) {
-            Object.keys(dados).forEach(k => localStorage.setItem(k, JSON.stringify(dados[k])));
-            mostrarSucesso("Dados restaurados! Reiniciando...");
-            setTimeout(() => window.location.reload(), 1500);
-        }
-    }
-
-    // ================= FUNÇÕES DE PÁGINA =================
-
-    document.addEventListener("DOMContentLoaded", () => {
-        carregarTabelas();
-        // Sincroniza sempre que abrir a página para garantir
-        sincronizarEspelho();
-    });
+    document.addEventListener("DOMContentLoaded", carregarTabelas);
 
     function carregarTabelas() {
         const dados = JSON.parse(localStorage.getItem('rhTabelasFiscais')) || {
@@ -174,6 +72,7 @@
             inss: { teto1: 1621.00, teto2: 2902.84, teto3: 4354.27, teto4: 8475.55 },
             irrf: { teto1: 2259.20, teto2: 2826.65, ded2: 169.44, teto3: 3751.05, ded3: 381.44, teto4: 4664.68, ded4: 662.77, ded5: 896.00 }
         };
+        // Preenchimento dos inputs...
         document.getElementById('salarioMinimo').value = dados.geral.salarioMinimo;
         document.getElementById('deducaoDependente').value = dados.geral.deducaoDependente;
         document.getElementById('inssTeto1').value = dados.inss.teto1;
@@ -214,32 +113,52 @@
             }
         };
         localStorage.setItem('rhTabelasFiscais', JSON.stringify(dados));
-        await sincronizarEspelho(); // Aciona o espelhamento
-        mostrarSucesso("Tabelas salvas e espelhadas!");
+        await MirrorDB.salvarAutomatico();
+        notificar("Configurações salvas e espelhadas!");
     }
 
-    function mostrarSucesso(texto) {
-        const msg = document.getElementById('msgSucesso');
-        msg.innerText = texto; msg.style.display = 'block';
-        setTimeout(() => msg.style.display = 'none', 3000);
-    }
-
-    function limparTudo() {
-        if(confirm("Isso apagará o localStorage, mas o IndexedDB (Mirror) continuará lá. Deseja limpar?")) {
-            localStorage.clear(); window.location.reload();
+    async function restaurarDoEspelho() {
+        if(confirm("Substituir dados atuais pelo último espelho automático?")) {
+            const sucesso = await MirrorDB.restaurar();
+            if(sucesso) {
+                notificar("Restauração concluída!");
+                setTimeout(() => window.location.reload(), 1000);
+            } else alert("Nenhum espelho encontrado.");
         }
     }
 
-    // Backup manual JSON
     function exportarBackup() {
-        const chaves = ['rhFuncionarios', 'rhTabelasFiscais', 'rhDocumentos', 'rhFaltas', 'rhEventos'];
         const backup = {};
-        chaves.forEach(k => { const d = localStorage.getItem(k); if(d) backup[k] = JSON.parse(d); });
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup));
-        const dlAnchor = document.createElement('a');
-        dlAnchor.setAttribute("href", dataStr);
-        dlAnchor.setAttribute("download", `backup_rh.json`);
-        dlAnchor.click();
+        MirrorDB.keys.forEach(k => {
+            const d = localStorage.getItem(k);
+            if(d) backup[k] = JSON.parse(d);
+        });
+        const blob = new Blob([JSON.stringify(backup, null, 2)], {type : 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup_hcm_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
+        a.click();
+    }
+
+    function importarBackup(event) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const dados = JSON.parse(e.target.result);
+                Object.keys(dados).forEach(k => localStorage.setItem(k, JSON.stringify(dados[k])));
+                notificar("Backup importado com sucesso!");
+                setTimeout(() => window.location.reload(), 1000);
+            } catch(err) { alert("Arquivo JSON inválido."); }
+        };
+        reader.readAsText(event.target.files[0]);
+    }
+
+    function limparTudo() {
+        if(confirm("⚠️ ATENÇÃO: Isso apagará TODOS os dados do navegador. Continuar?")) {
+            localStorage.clear();
+            window.location.reload();
+        }
     }
 </script>
 </body>
